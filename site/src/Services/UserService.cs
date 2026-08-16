@@ -1,3 +1,4 @@
+using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -64,10 +65,15 @@ public sealed class UserService
             "select count(*) from signup_event where ip = @ip and ok and created > now() - interval '1 minute'", new { ip }, tx);
         if (recent >= 1) return (SignupError.IpRateLimited, "Too many attempts. Try again in a minute.", null);
 
+        var p = new DynamicParameters();
+        p.Add("username", username);
+        p.Add("hash", hash);
+        p.Add("bday", birthday.Value.ToDateTime(TimeOnly.MinValue), DbType.Date); // dapper can't map DateOnly — explicit DbType.Date
+        p.Add("gender", gender);
+        p.Add("u13", isU13);
         var id = c.ExecuteScalar<long>(
             @"insert into users (username, password_hash, birthday, gender, is_under13)
-              values (@username, @hash, @bday, @gender, @u13) returning id",
-            new { username, hash, bday = birthday.Value, gender, u13 = isU13 }, tx);
+              values (@username, @hash, @bday, @gender, @u13) returning id", p, tx);
         c.Execute("insert into user_economy (user_id, robux) values (@id, @starter)", new { id, starter = _cfg.NewUser.StarterRobux }, tx);
         c.Execute("insert into user_settings (user_id) values (@id)", new { id }, tx);
         c.Execute("insert into signup_event (username, ip, ok) values (@username, @ip, true)", new { username, ip }, tx);
