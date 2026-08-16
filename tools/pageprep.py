@@ -23,6 +23,48 @@ CSS_NAME_MAP = {  # data-bundlename -> held css file (study/10_static_assets/css
 }
 EMPTY_CSS = "/bundles/css/__empty.css"
 
+IMG_EXTS = r"(?:png|jpg|jpeg|gif|ico|svg|webp|woff2?|ttf|eot)"
+_MANIFEST: set[str] = set()  # "kind|remote-url|local-rel-path" of assets we don't hold locally
+
+def _held_img_index() -> dict[str, str]:
+    """hash -> actual bundled filename (covers both hash.ext and hash-suffix.ext naming)"""
+    d = SITE_WWW / "bundles" / "img"
+    idx = {}
+    if d.is_dir():
+        for f in d.iterdir():
+            m = re.match(r"^([0-9a-f]{32})(?:-[^.]*)?\.(\w+)$", f.name)
+            if m: idx.setdefault(m.group(1), f.name)
+    return idx
+
+def localize_css_urls(css: str, css_name: str) -> str:
+    """Archive captures leave asset URLs pointing at web.archive.org (/web/<ts>im_/...),
+    archive-relative /cdn/imgs or /cdn/font helper paths, or plain rbxcdn. Point all of
+    them at our local /bundles/img mirror; anything we don't hold goes into the fetch
+    manifest for tools/fetch-assets.ps1."""
+    css = re.sub(r"url\(\s*[\"']?(?:https://web\.archive\.org)?(?:/web/\d+im_/)?"
+                 r"(?:https?://images\.rbxcdn\.com/|images\.rbxcdn\.com/|/+cdn/imgs/+|/+cdn/font/+)"
+                 r"([0-9a-zA-Z_\-]+\." + IMG_EXTS + r")[\"']?\s*\)",
+                 lambda mm: _img_rep(mm, "images"), css, flags=re.I)
+    css = re.sub(r"url\(\s*[\"']?(?:https://web\.archive\.org)?/web/\d+im_/"
+                 r"https://(?:static|css)\.rbxcdn\.com/([^\"')\s]+\." + IMG_EXTS + r")[\"']?\s*\)",
+                 lambda mm: _img_rep(mm, "static"), css, flags=re.I)
+    css = re.sub(r"url\(\s*[\"']?https://static\.rbxcdn\.com/([^\"')\s]+\." + IMG_EXTS + r")[\"']?\s*\)",
+                 lambda mm: _img_rep(mm, "static"), css, flags=re.I)
+    return css
+
+def _img_rep(mm: re.Match, kind: str) -> str:
+    fname = mm.group(1)
+    local = f"/bundles/img/{'staticcdn/' if kind == 'static' else ''}{fname}"
+    store = SITE_WWW / local.lstrip("/")
+    if not store.exists():
+        if kind == "images":
+            remote = f"https://images.rbxcdn.com/{fname}"
+        else:
+            host = "css.rbxcdn.com" if "css.rbxcdn.com" in mm.group(0) else "static.rbxcdn.com"
+            remote = f"https://{host}/{fname}"
+        _MANIFEST.add(f"{kind}|{remote}|{local.lstrip('/')}")
+    return f"url({local})"
+
 def brace_extract(text: str, start: int) -> tuple[str, int]:
     """extract balanced {...} block starting at index of '{'"""
     depth, i = 0, start
@@ -108,10 +150,19 @@ def prep(src: Path, name: str) -> Path:
     t = re.sub(r'href=["\']https://static\.rbxcdn\.com/css/page___[0-9a-f]+_m\.css/fetch["\']', 'href="/bundles/css/page.css"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
 
-    # 5) images: images.rbxcdn.com/{hash}(.ext) -> /bundles/img/{hash}.ext (identity naming in imgs.zip)
-    t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-fA-Z\-]+)\.(png|jpg|jpeg|gif|ico|svg|webp)',
-               r'/bundles/img/\1.\2', t)
-    t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-fA-Z\-]+)(?=[\s"\'\)])', r'/bundles/img/\1.png', t)
+    # 5) images: images.rbxcdn.com/{hash}(.ext) -> /bundles/img/<held file matching hash>;
+    # not held -> {hash}.png + fetch-manifest entry (tools/fetch-assets.ps1 fills it)
+    idx = _held_img_index()
+    def img_sub(mm: re.Match) -> str:
+        h = mm.group(1)
+        ext = ((mm.group(2) if mm.lastindex and mm.lastindex > 1 else None) or "png").lower()
+        held = idx.get(h)
+        if held: return "/bundles/img/" + held
+        local = f"bundles/img/{h}.{ext}"
+        _MANIFEST.add(f"images|https://images.rbxcdn.com/{h}.{ext}|{local}")
+        return "/" + local
+    t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-fA-Z\-]+)\.(png|jpg|jpeg|gif|ico|svg|webp)', img_sub, t)
+    t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-f]{16,64})(?=[\s"\'\)])', img_sub, t)
 
     # 6) absolute site links -> relative (page links only; API URLs are shimmed at runtime)
     t = re.sub(r'https?://(?:www|web)\.roblox\.com(?=[/"\'\s])', '', t)
@@ -162,10 +213,22 @@ def sync_assets():
             if f.is_file(): shutil.copy2(f, dst / f.name)
     (SITE_WWW / "bundles/css/__empty.css").write_text("/* luxora: bundle not cached (safe to 404-style empty) */\n")
     (SITE_WWW / "bundles/js/__404.js").write_text("/* luxora: bundle not cached */\n")
+    # localize archive/cdn asset URLs inside every css bundle
+    for f in (SITE_WWW / "bundles/css").glob("*.css"):
+        if f.name.startswith("__"): continue
+        css = f.read_text(encoding="utf-8", errors="replace")
+        f.write_text(localize_css_urls(css, f.name), encoding="utf-8")
     (SITE_WWW / "luxora").mkdir(exist_ok=True)
     (SITE_WWW / "luxora/off.js").write_text("/* stubbed external tracker */\n")
-    print("[pageprep] assets synced to site/wwwroot/bundles")
+    print("[pageprep] assets synced to site/wwwroot/bundles (css urls localized)")
+
+def write_manifest():
+    out = ROOT / "tools" / "assets-manifest.txt"
+    lines = sorted(_MANIFEST)
+    out.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    if lines: print(f"[pageprep] {len(lines)} missing assets -> tools/assets-manifest.txt (run tools/fetch-assets.ps1 on the VPS)")
 
 if __name__ == "__main__":
     sync_assets()
     prep(Path(sys.argv[1]), sys.argv[2])
+    write_manifest()

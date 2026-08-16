@@ -31,29 +31,29 @@
 #app-stores-container .apple-badge {
   width: 150px;
   width: 149.58009px;
-  background-image: url(/cdn/imgs/1b65926236d951b2af57201b275f595b-apple-badge-en_us.svg);
+  background-image: url(/bundles/img/1b65926236d951b2af57201b275f595b-apple-badge-en_us.svg);
 }
 #app-stores-container .google-badge {
   width: 171px;
   width: 170.73954px;
-  background-image: url(/cdn/imgs/06908992cf0a27763b1c7bd4ab3941a4-google-badge-en_us.svg);
+  background-image: url(/bundles/img/06908992cf0a27763b1c7bd4ab3941a4-google-badge-en_us.svg);
 }
 #app-stores-container .amazon-badge {
   width: 170px;
   width: 170.2381px;
-  background-image: url(/cdn/imgs/484d5f5fbd1e763ce57ae6ad39d88a6a-amazon-badge-en_us.png);
+  background-image: url(/bundles/img/484d5f5fbd1e763ce57ae6ad39d88a6a-amazon-badge-en_us.png);
 }
 #app-stores-container .xbox-badge {
   width: 143px;
   width: 143.15789px;
   border: 1px solid #9f9e9e;
   background-position: 50%;
-  background-image: url(/cdn/imgs/cfbff08ccdfe3e51898dfecf5635dc2a-xbox-badge-en_us.png);
+  background-image: url(/bundles/img/cfbff08ccdfe3e51898dfecf5635dc2a-xbox-badge-en_us.png);
 }
 #app-stores-container .microsoft-badge {
   width: 140px;
   width: 138.7561px;
-  background-image: url(/cdn/imgs/3f666dec88527004bbe05e9b45d0ada9-microsoft-badge-en_us.svg);
+  background-image: url(/bundles/img/3f666dec88527004bbe05e9b45d0ada9-microsoft-badge-en_us.svg);
 }
 @media (max-width: 991px) {
   #app-stores-container .microsoft-badge {
@@ -87,13 +87,13 @@ body {
   min-height: 100vh;
 }
 #RollerContainer.rollercoaster-background {
-  background-image: url(/cdn/imgs/782b7fc18a24ee997efd9a7f02fa4bf9-bg_08072019.jpg);
+  background-image: url(/bundles/img/782b7fc18a24ee997efd9a7f02fa4bf9-bg_08072019.jpg);
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
 }
 #InnerRollerContainer {
-  background-image: url(/cdn/imgs/78413c0d5e05d6c36720ecc0c3013cbc-vignette.png);
+  background-image: url(/bundles/img/78413c0d5e05d6c36720ecc0c3013cbc-vignette.png);
   background-size: 100% 100%;
   background-position: top;
   background-repeat: no-repeat;
@@ -106,7 +106,7 @@ body {
   border-radius: 8px;
 }
 .text-logo {
-  background-image: url(/cdn/imgs/899500f61badca57cd9c3d6bffdbc383-letterform.png);
+  background-image: url(/bundles/img/899500f61badca57cd9c3d6bffdbc383-letterform.png);
   height: 50px;
   background-repeat: no-repeat;
   background-position: bottom;
@@ -250,7 +250,7 @@ body {
 .icon-unlocked,
 .icon-up,
 .icon-viewdetails {
-  background-image: url(/cdn/imgs/8f9d73863e52851ec5910be4ffa5ed78-generic_01312019.svg);
+  background-image: url(/bundles/img/8f9d73863e52851ec5910be4ffa5ed78-generic_01312019.svg);
   background-repeat: no-repeat;
   background-size: 200% auto;
   width: 28px;
@@ -333,7 +333,7 @@ body {
 .dark-theme .icon-unlocked,
 .dark-theme .icon-up,
 .dark-theme .icon-viewdetails {
-  background-image: url(/cdn/imgs/a057a8bc94e7ab78517765ddb4e77384-generic_dark_11062018.svg);
+  background-image: url(/bundles/img/a057a8bc94e7ab78517765ddb4e77384-generic_dark_11062018.svg);
 }
 .light-theme .icon-additem,
 .light-theme .icon-arrow-right-blue,
@@ -410,7 +410,7 @@ body {
 .light-theme .icon-unlocked,
 .light-theme .icon-up,
 .light-theme .icon-viewdetails {
-  background-image: url(/cdn/imgs/c37a5314ba360c995451518527cf293c-generic_light.svg);
+  background-image: url(/bundles/img/c37a5314ba360c995451518527cf293c-generic_light.svg);
 }
 .icon-checkmark-16x16,
 .icon-close-16x16,
@@ -425,7 +425,7 @@ body {
 .icon-settings-16x16,
 .icon-up-16x16,
 .rbx-select-group:hover .icon-down {
-  background-image: url(/cdn/imgs//8f9d73863e52851ec5910be4ffa5ed78-generic_01312019.svg);
+  background-image: url(/bundles/img/8f9d73863e52851ec5910be4ffa5ed78-generic_01312019.svg);
   background-repeat: no-repeat;
   background-size: 32px auto;
   width: 16px;
@@ -447,7 +447,7 @@ body {
 .dark-theme .icon-up-16x16,
 .dark-theme .rbx-select-group:hover .icon-down,
 .rbx-select-group:hover .dark-theme .icon-down {
-  background-image: url(/cdn/imgs/a057a8bc94e7ab78517765ddb4e77384-generic_dark_11062018.svg);
+  background-image: url(/bundles/img/a057a8bc94e7ab78517765ddb4e77384-generic_dark_11062018.svg);
 }
 .light-theme .icon-checkmark-16x16,
 .light-theme .icon-close-16x16,
@@ -463,7 +463,7 @@ body {
 .light-theme .icon-up-16x16,
 .light-theme .rbx-select-group:hover .icon-down,
 .rbx-select-group:hover .light-theme .icon-down {
-  background-image: url(/cdn/imgs/c37a5314ba360c995451518527cf293c-generic_light.svg);
+  background-image: url(/bundles/img/c37a5314ba360c995451518527cf293c-generic_light.svg);
 }
 .icon-home {
   background-position: 0 0;
@@ -1470,10 +1470,10 @@ textarea::placeholder {
   background-position: -36px;
 }
 .gender-female {
-  background-image: url(/cdn/imgs/535002190af0360c2aae7f204ed65ade-gender-female.png);
+  background-image: url(/bundles/img/535002190af0360c2aae7f204ed65ade-gender-female.png);
 }
 .gender-male {
-  background-image: url(/cdn/imgs/0eea8fbf5b4e7206e5b99a0d0dc3f074-gender-male.png);
+  background-image: url(/bundles/img/0eea8fbf5b4e7206e5b99a0d0dc3f074-gender-male.png);
 }
 fieldset {
   margin: 0;
@@ -2288,244 +2288,244 @@ h3 {
   }
 }
 .classic-m_classic-m_roblox-shirt_pastelOrange_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/classic-m_classic-m_roblox-shirt_pastelOrange_v5.png);
+  background-image: url(/bundles/img/classic-m_classic-m_roblox-shirt_pastelOrange_v5.png);
 }
 .classic-f_classic-f_denim-white_nougat_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/classic-m_classic-f_denim-white_nougat_v5.png);
+  background-image: url(/bundles/img/classic-m_classic-f_denim-white_nougat_v5.png);
 }
 .neo-m_neo-m_zipup-jacket_darkOrange_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/neo-m_neo-m_zipup-jacket_darkOrange_v5.png);
+  background-image: url(/bundles/img/neo-m_neo-m_zipup-jacket_darkOrange_v5.png);
 }
 .neo-f_neo-f_purple-top_lightOrange_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/neo-f_neo-f_purple-top_lightOrange_v5.png);
+  background-image: url(/bundles/img/neo-f_neo-f_purple-top_lightOrange_v5.png);
 }
 .style-m_style-m_guitar-tee_pastelOrange_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/style-m_style-m_guitar-tee_pastelOrange_v5.png);
+  background-image: url(/bundles/img/style-m_style-m_guitar-tee_pastelOrange_v5.png);
 }
 .style-f_style-f_denim-jacket_lightOrange_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/style-f_style-f_denim-jacket_lightOrange_v5.png);
+  background-image: url(/bundles/img/style-f_style-f_denim-jacket_lightOrange_v5.png);
 }
 .rthro-m_rthro-m_rbx-green_nougat_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/rthro-m_rthro-m_rbx-green_nougat_v5.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_rbx-green_nougat_v5.png);
 }
 .rthro-f_rthro-f_rbx-black_lightOrange_body {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/rthro-f_rthro-f_rbx-black_lightOrange_v5.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_rbx-black_lightOrange_v5.png);
 }
 .classic-m_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/dfca8e5e02b37b9caed36737e2b8a48d-classic-m_head.png);
+  background-image: url(/bundles/img/dfca8e5e02b37b9caed36737e2b8a48d-classic-m_head.png);
 }
 .classic-f_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/a33fdfd68803969eed115eca1ae52edb-classic-f_head.png);
+  background-image: url(/bundles/img/a33fdfd68803969eed115eca1ae52edb-classic-f_head.png);
 }
 .rthro-m_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/17fd32ad63524b7c5cb14a14251652cb-rthro-m_head.png);
+  background-image: url(/bundles/img/17fd32ad63524b7c5cb14a14251652cb-rthro-m_head.png);
 }
 .rthro-f_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/d255faac647824c013d47a384e897d98-rthro-f_head.png);
+  background-image: url(/bundles/img/d255faac647824c013d47a384e897d98-rthro-f_head.png);
 }
 .style-m_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/e3174ee9f43715f6c65d83280e122cf8-style-m_head.png);
+  background-image: url(/bundles/img/e3174ee9f43715f6c65d83280e122cf8-style-m_head.png);
 }
 .style-f_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/ef66f683e60cfc05b781fc5801c9d8b6-style-f_head.png);
+  background-image: url(/bundles/img/ef66f683e60cfc05b781fc5801c9d8b6-style-f_head.png);
 }
 .neo-m_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/1580b59c61ba0a9dafc445a06ad13e60-neo-m_head.png);
+  background-image: url(/bundles/img/1580b59c61ba0a9dafc445a06ad13e60-neo-m_head.png);
 }
 .neo-f_head {
-  background-image: url(https://web.archive.org/web/20200731233918im_/https://images.rbxcdn.com/aa5507b4de3723689ab2e69593447532-neo-f_head.png);
+  background-image: url(/bundles/img/aa5507b4de3723689ab2e69593447532-neo-f_head.png);
 }
 .classic-f_classic-f_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_denim-jacket_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_denim-white_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_guitar-tee_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_purple-top_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_rbx-black_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_rbx-green_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_roblox-shirt_nougat_clothing_v4.png);
 }
 .classic-f_classic-f_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-f_classic-f_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-f_classic-f_zipup-jacket_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_denim-jacket_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_denim-white_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_guitar-tee_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_purple-top_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_rbx-black_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_rbx-green_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_roblox-shirt_nougat_clothing_v4.png);
 }
 .classic-m_classic-m_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/classic-m_classic-m_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/classic-m_classic-m_zipup-jacket_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_denim-jacket_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_denim-white_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_guitar-tee_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_purple-top_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_rbx-black_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_rbx-green_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_roblox-shirt_nougat_clothing_v4.png);
 }
 .neo-f_neo-f_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-f_neo-f_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-f_neo-f_zipup-jacket_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_denim-jacket_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_denim-white_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_guitar-tee_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_purple-top_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_rbx-black_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_rbx-green_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_roblox-shirt_nougat_clothing_v4.png);
 }
 .neo-m_neo-m_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/neo-m_neo-m_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/neo-m_neo-m_zipup-jacket_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_denim-jacket_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_denim-white_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_guitar-tee_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_purple-top_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_rbx-black_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_rbx-green_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_roblox-shirt_nougat_clothing_v4.png);
 }
 .rthro-f_rthro-f_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-f_rthro-f_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-f_rthro-f_zipup-jacket_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_denim-jacket_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_denim-white_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_guitar-tee_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_purple-top_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_rbx-black_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_rbx-green_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_roblox-shirt_nougat_clothing_v4.png);
 }
 .rthro-m_rthro-m_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/rthro-m_rthro-m_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/rthro-m_rthro-m_zipup-jacket_nougat_clothing_v4.png);
 }
 .style-f_style-f_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_denim-jacket_nougat_clothing_v4.png);
 }
 .style-f_style-f_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_denim-white_nougat_clothing_v4.png);
 }
 .style-f_style-f_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_guitar-tee_nougat_clothing_v4.png);
 }
 .style-f_style-f_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_purple-top_nougat_clothing_v4.png);
 }
 .style-f_style-f_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_rbx-black_nougat_clothing_v4.png);
 }
 .style-f_style-f_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_rbx-green_nougat_clothing_v4.png);
 }
 .style-f_style-f_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_roblox-shirt_nougat_clothing_v4.png);
 }
 .style-f_style-f_zipup-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-f_style-f_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-f_style-f_zipup-jacket_nougat_clothing_v4.png);
 }
 .style-m_style-m_denim-jacket_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_denim-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_denim-jacket_nougat_clothing_v4.png);
 }
 .style-m_style-m_denim-white_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_denim-white_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_denim-white_nougat_clothing_v4.png);
 }
 .style-m_style-m_guitar-tee_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_guitar-tee_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_guitar-tee_nougat_clothing_v4.png);
 }
 .style-m_style-m_purple-top_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_purple-top_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_purple-top_nougat_clothing_v4.png);
 }
 .style-m_style-m_rbx-black_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_rbx-black_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_rbx-black_nougat_clothing_v4.png);
 }
 .style-m_style-m_rbx-green_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_rbx-green_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_rbx-green_nougat_clothing_v4.png);
 }
 .style-m_style-m_roblox-shirt_nougat_clothing {
-  background-image: url(https://web.archive.org/web/20200731233918im_/http://images.rbxcdn.com/style-m_style-m_roblox-shirt_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_roblox-shirt_nougat_clothing_v4.png);
 }
 .style-m_style-m_zipup-jacket_nougat_clothing {
-  background-image: url(/cdn/imgs/style-m_style-m_zipup-jacket_nougat_clothing_v4.png);
+  background-image: url(/bundles/img/style-m_style-m_zipup-jacket_nougat_clothing_v4.png);
 }
 .bl_color_inner {
   background-color: #95835e;
@@ -2583,220 +2583,220 @@ h3 {
   border: 3px solid #ae7d60;
 }
 .cm_head {
-  background-image: url(/cdn/imgs/2f956a0a874f14b8f0db17e5ab141a87-cm_head.png);
+  background-image: url(/bundles/img/2f956a0a874f14b8f0db17e5ab141a87-cm_head.png);
 }
 .cf_head {
-  background-image: url(/cdn/imgs/bbb2bdb6b9521b972b5ef67dafba5eea-cf_head.png);
+  background-image: url(/bundles/img/bbb2bdb6b9521b972b5ef67dafba5eea-cf_head.png);
 }
 .nm_head {
-  background-image: url(/cdn/imgs/3c9e9a53c106c686651b1385b7cd584c-nm_head.png);
+  background-image: url(/bundles/img/3c9e9a53c106c686651b1385b7cd584c-nm_head.png);
 }
 .nf_head {
-  background-image: url(/cdn/imgs/504cc8d672d90f79717be6f98fc17aea-nf_head.png);
+  background-image: url(/bundles/img/504cc8d672d90f79717be6f98fc17aea-nf_head.png);
 }
 .sm_head {
-  background-image: url(/cdn/imgs/b429b705e032a90d8bd99e6296e2c0de-sm_head.png);
+  background-image: url(/bundles/img/b429b705e032a90d8bd99e6296e2c0de-sm_head.png);
 }
 .sf_head {
-  background-image: url(/cdn/imgs/9f7160cb29174dc76a0b6dc389d9bf3a-sf_head.png);
+  background-image: url(/bundles/img/9f7160cb29174dc76a0b6dc389d9bf3a-sf_head.png);
 }
 .rm_head {
-  background-image: url(/cdn/imgs/a11c134a1f40800361ace09d25ba4880-rm_head.png);
+  background-image: url(/bundles/img/a11c134a1f40800361ace09d25ba4880-rm_head.png);
 }
 .rf_head {
-  background-image: url(/cdn/imgs/70f2fbe014ec38beadba701cec54504b-rf_head.png);
+  background-image: url(/bundles/img/70f2fbe014ec38beadba701cec54504b-rf_head.png);
 }
 .rm_rm_rsg_ng_body {
-  background-image: url(/cdn/imgs/rm_rm_rsg_ng_v3.png);
+  background-image: url(/bundles/img/rm_rm_rsg_ng_v3.png);
 }
 .rf_rf_rsb_lo_body {
-  background-image: url(/cdn/imgs/rf_rf_rsb_lo_v3.png);
+  background-image: url(/bundles/img/rf_rf_rsb_lo_v3.png);
 }
 .sm_sm_gt_po_body {
-  background-image: url(/cdn/imgs/sm_sm_gt_po_v3.png);
+  background-image: url(/bundles/img/sm_sm_gt_po_v3.png);
 }
 .sf_sf_dj_lo_body {
-  background-image: url(/cdn/imgs/sf_sf_dj_lo_v3.png);
+  background-image: url(/bundles/img/sf_sf_dj_lo_v3.png);
 }
 .nm_nm_ps_bn_body {
-  background-image: url(/cdn/imgs/nm_nm_ps_bn_v3.png);
+  background-image: url(/bundles/img/nm_nm_ps_bn_v3.png);
 }
 .nf_nf_pt_ng_body {
-  background-image: url(/cdn/imgs/nf_nf_pt_ng_v3.png);
+  background-image: url(/bundles/img/nf_nf_pt_ng_v3.png);
 }
 .c_cm_gj_do_body {
-  background-image: url(/cdn/imgs/c_cm_gj_do_v3.png);
+  background-image: url(/bundles/img/c_cm_gj_do_v3.png);
 }
 .c_cf_dw_bl_body {
-  background-image: url(/cdn/imgs/c_cf_dw_bl_v3.png);
+  background-image: url(/bundles/img/c_cf_dw_bl_v3.png);
 }
 .c_cf_dj_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_dj_ng_clothing_v1.png);
 }
 .c_cf_dw_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_dw_ng_clothing_v1.png);
 }
 .c_cf_gj_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_gj_ng_clothing_v1.png);
 }
 .c_cf_gt_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_gt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_gt_ng_clothing_v1.png);
 }
 .c_cf_ps_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_ps_ng_clothing_v1.png);
 }
 .c_cf_pt_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_pt_ng_clothing_v1.png);
 }
 .c_cf_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_rsb_ng_clothing_v1.png);
 }
 .c_cf_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/c_cf_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/c_cf_rsg_ng_clothing_v1.png);
 }
 .nf_nf_dj_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_dj_ng_clothing_v1.png);
 }
 .nf_nf_dw_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_dw_ng_clothing_v1.png);
 }
 .nf_nf_gj_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_gj_ng_clothing_v1.png);
 }
 .nf_nf_gt_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_gt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_gt_ng_clothing_v1.png);
 }
 .nf_nf_ps_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_ps_ng_clothing_v1.png);
 }
 .nf_nf_pt_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_pt_ng_clothing_v1.png);
 }
 .nf_nf_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_rsb_ng_clothing_v1.png);
 }
 .nf_nf_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/nf_nf_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nf_nf_rsg_ng_clothing_v1.png);
 }
 .nm_nm_dj_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_dj_ng_clothing_v1.png);
 }
 .nm_nm_dw_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_dw_ng_clothing_v1.png);
 }
 .nm_nm_gj_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_gj_ng_clothing_v1.png);
 }
 .nm_nm_gt_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_gt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_gt_ng_clothing_v1.png);
 }
 .nm_nm_ps_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_ps_ng_clothing_v1.png);
 }
 .nm_nm_pt_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_pt_ng_clothing_v1.png);
 }
 .nm_nm_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_rsb_ng_clothing_v1.png);
 }
 .nm_nm_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/nm_nm_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/nm_nm_rsg_ng_clothing_v1.png);
 }
 .rf_rf_dj_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_dj_ng_clothing_v1.png);
 }
 .rf_rf_dw_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_dw_ng_clothing_v1.png);
 }
 .rf_rf_gj_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_gj_ng_clothing_v1.png);
 }
 .rf_rf_gt_ng_clothing {
   background-image: url(h/cdn/imgs/rf_rf_gt_ng_clothing_v1.png);
 }
 .rf_rf_ps_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_ps_ng_clothing_v1.png);
 }
 .rf_rf_pt_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_pt_ng_clothing_v1.png);
 }
 .rf_rf_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_rsb_ng_clothing_v1.png);
 }
 .rf_rf_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/rf_rf_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rf_rf_rsg_ng_clothing_v1.png);
 }
 .rm_rf_dj_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_dj_ng_clothing_v1.png);
 }
 .rm_rf_dw_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_dw_ng_clothing_v1.png);
 }
 .rm_rf_gj_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_gj_ng_clothing_v1.png);
 }
 .rm_rf_gt_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_gt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_gt_ng_clothing_v1.png);
 }
 .rm_rf_ps_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_ps_ng_clothing_v1.png);
 }
 .rm_rf_pt_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_pt_ng_clothing_v1.png);
 }
 .rm_rf_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_rsb_ng_clothing_v1.png);
 }
 .rm_rf_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/rm_rf_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/rm_rf_rsg_ng_clothing_v1.png);
 }
 .sf_sf_dj_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_dj_ng_clothing_v1.png);
 }
 .sf_sf_dw_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_dw_ng_clothing_v1.png);
 }
 .sf_sf_gj_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_gj_ng_clothing_v1.png);
 }
 .sf_sf_gt_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_gt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_gt_ng_clothing_v1.png);
 }
 .sf_sf_ps_ng_clothing {
-  background-image: url(/cdn/imgs/f_sf_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/f_sf_ps_ng_clothing_v1.png);
 }
 .sf_sf_pt_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_pt_ng_clothing_v1.png);
 }
 .sf_sf_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_rsb_ng_clothing_v1.png);
 }
 .sf_sf_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/sf_sf_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sf_sf_rsg_ng_clothing_v1.png);
 }
 .sm_sm_dj_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_dj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_dj_ng_clothing_v1.png);
 }
 .sm_sm_dw_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_dw_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_dw_ng_clothing_v1.png);
 }
 .sm_sm_gj_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_gj_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_gj_ng_clothing_v1.png);
 }
 .sm_sm_gt_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_gt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_gt_ng_clothing_v1.png);
 }
 .sm_sm_ps_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_ps_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_ps_ng_clothing_v1.png);
 }
 .sm_sm_pt_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_pt_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_pt_ng_clothing_v1.png);
 }
 .sm_sm_rsb_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_rsb_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_rsb_ng_clothing_v1.png);
 }
 .sm_sm_rsg_ng_clothing {
-  background-image: url(/cdn/imgs/sm_sm_rsg_ng_clothing_v1.png);
+  background-image: url(/bundles/img/sm_sm_rsg_ng_clothing_v1.png);
 }
 #AvatarContentContainer {
   background-position: 50%;
@@ -2805,16 +2805,16 @@ h3 {
   min-width: 1199px;
 }
 #AvatarContentContainer.avatar-3d-background {
-  background-image: url(/cdn/imgs/4a99b81d4409700ce9f0a3e7e65a44d7-3Dview.png);
+  background-image: url(/bundles/img/4a99b81d4409700ce9f0a3e7e65a44d7-3Dview.png);
 }
 #AvatarContentContainer.avatar-tiles-background {
-  background-image: url(/cdn/imgs/4e9a02c322db2a40208080b78df36bef-Background90.jpg);
+  background-image: url(/bundles/img/4e9a02c322db2a40208080b78df36bef-Background90.jpg);
 }
 #AvatarContentContainer.avatar-lab-background-v2 {
-  background-image: url(/cdn/imgs/899500f61badca57cd9c3d6bffdbc383-letterform.png);
+  background-image: url(/bundles/img/899500f61badca57cd9c3d6bffdbc383-letterform.png);
 }
 .avatar-text-logo {
-  background-image: url(//cdn/imgs/899500f61badca57cd9c3d6bffdbc383-letterform.png);
+  background-image: url(/bundles/img/899500f61badca57cd9c3d6bffdbc383-letterform.png);
   height: 30px;
   width: 200px;
   background-repeat: no-repeat;
@@ -3148,7 +3148,7 @@ h3 {
 .avatar-continue-button-container {
   z-index: 2;
   margin-top: -24px;
-  background-image: url(//cdn/imgs/72ed04f68186be7dfa2971cda904cbbb-btncontainer.png);
+  background-image: url(/bundles/img/72ed04f68186be7dfa2971cda904cbbb-btncontainer.png);
   background-repeat: repeat;
   background-position: 0 100%;
   background-size: contain;
@@ -3386,7 +3386,7 @@ h3 {
   height: 91px;
   cursor: pointer;
   vertical-align: middle;
-  background-image: url(/cdn/imgs/d051616c20533dfaa6eb80edbe81fa79-TrailerThumbnail.png);
+  background-image: url(/bundles/img/d051616c20533dfaa6eb80edbe81fa79-TrailerThumbnail.png);
   background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;
