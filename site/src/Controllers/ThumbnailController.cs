@@ -32,7 +32,7 @@ public sealed class ThumbnailController : ControllerBase
             return new
             {
                 requestId = RequestId(request.RequestId), targetId = request.TargetId,
-                state = State(result.State), imageUrl = result.Url, version = "RCC1"
+                state = State(result.State), imageUrl = result.Url, version = "RCC2"
             };
         });
         return Ok(new { data });
@@ -78,7 +78,7 @@ public sealed class ThumbnailController : ControllerBase
         var data = targets.Select(id =>
         {
             var result = _thumbs.GetOrQueue(kind, id, width, height);
-            return new { targetId = id, state = State(result.State), imageUrl = result.Url, version = "RCC1" };
+            return new { targetId = id, state = State(result.State), imageUrl = result.Url, version = "RCC2" };
         });
         return Ok(new { data });
     }

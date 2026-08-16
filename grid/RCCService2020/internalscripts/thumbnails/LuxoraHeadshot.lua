@@ -14,10 +14,13 @@ if character and character:FindFirstChild("Head") then
     local camera = Instance.new("Camera", character)
     camera.Name = "ThumbnailCamera"
     camera.CameraType = Enum.CameraType.Scriptable
-    local look = head.CFrame * CFrame.new(0, 0.15, 0)
-    local position = head.CFrame + (CFrame.Angles(0, -math.pi / 16, 0).lookVector.unit * 3)
+    -- 2020 portrait framing: include the head, shoulders, and upper torso rather
+    -- than filling the circle with only the face. Rendering large then scaling
+    -- down also prevents the dark one-pixel edge seen on tiny navbar renders.
+    local look = head.CFrame * CFrame.new(0, -0.7, 0)
+    local position = head.CFrame + (CFrame.Angles(0, -math.pi / 16, 0).lookVector.unit * 5.25)
     camera.CoordinateFrame = CFrame.new(position.p, look.p)
-    camera.FieldOfView = 30
+    camera.FieldOfView = 38
     workspace.CurrentCamera = camera
 end
 local result, requestedUrls = ThumbnailGenerator:Click(fileExtension, x, y, true)

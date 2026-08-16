@@ -17,6 +17,7 @@ public sealed record ThumbnailResult(ThumbnailState State, string? Url, string? 
 /// </summary>
 public sealed class ThumbnailService
 {
+    private const string RendererVersion = "rcc2";
     private readonly Db _db;
     private readonly LuxoraConfig _cfg;
     private readonly IHttpClientFactory _http;
@@ -50,10 +51,10 @@ public sealed class ThumbnailService
     }
 
     public string Url(ThumbnailKind kind, long targetId, int width, int height)
-        => $"/thumbnails/{KindName(kind)}/{targetId}/{width}x{height}.png";
+        => $"/thumbnails/{KindName(kind)}/{targetId}/{width}x{height}-{RendererVersion}.png";
 
     private string DiskPath(ThumbnailKind kind, long targetId, int width, int height)
-        => Path.Combine(_root, KindName(kind), targetId.ToString(), $"{width}x{height}.png");
+        => Path.Combine(_root, KindName(kind), targetId.ToString(), $"{width}x{height}-{RendererVersion}.png");
 
     public ThumbnailResult GetOrQueue(ThumbnailKind kind, long targetId, int width, int height)
     {
