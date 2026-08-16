@@ -1,0 +1,16 @@
+# never commit local secrets
+site/appsettings.json
+**/appsettings.*.local.json
+
+# build output
+[Bb]in/
+[Oo]bj/
+out/
+
+# rider/vs
+.vs/
+.idea/
+*.user
+
+# static preview artifact (pageprep demo render)
+site/wwwroot/index.html
