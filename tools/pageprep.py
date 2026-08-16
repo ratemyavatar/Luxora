@@ -11,6 +11,8 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
+GLUE_VER = "bday2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
 SITE_WWW = ROOT / "site" / "wwwroot"
@@ -201,11 +203,11 @@ def prep(src: Path, name: str) -> Path:
         t = re.sub(r"</body>", "\n" + "\n".join(inject) + "\n</body>", t, count=1, flags=re.I)
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
-    t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js"></script>', t, count=1, flags=re.I)
+    t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'
             '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>\n'
-            '<script src="/luxora/auth.js" defer></script>\n</body>')
+            '<script src="/luxora/auth.js?v=' + GLUE_VER + '" defer></script>\n</body>')
     t = re.sub(r"</body>", glue, t, count=1, flags=re.I)
 
     out = SITE_WWW / "pages" / f"{name}.htmltpl"

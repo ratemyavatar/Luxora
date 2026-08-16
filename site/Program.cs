@@ -46,7 +46,15 @@ app.UseMiddleware<XsrfMiddleware>();
 app.UseMiddleware<PageRenderMiddleware>();
 
 app.UseDefaultFiles();
-app.UseStaticFiles();          // wwwroot: /bundles/* (era css/js/imgs), /luxora/* (our glue)
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        // our glue must NEVER be served stale — one old cached auth.js already cost us a day
+        if (ctx.Context.Request.Path.StartsWithSegments("/luxora"))
+            ctx.Context.Response.Headers.CacheControl = "no-store";
+    }
+});          // wwwroot: /bundles/* (era css/js/imgs), /luxora/* (our glue)
 app.MapControllers();
 
 app.Run();

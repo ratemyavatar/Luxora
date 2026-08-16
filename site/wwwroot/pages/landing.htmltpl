@@ -4,7 +4,7 @@
 <html>
 <!--<![endif]-->
 <head data-machine-id="WEB594">
-<script src="/luxora/hostshim.js"></script>
+<script src="/luxora/hostshim.js?v=bday2"></script>
     <!-- MachineID: WEB594 -->
     <title>Roblox</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,requiresActiveX=true" />
@@ -960,6 +960,6 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js" defer></script>
+<script src="/luxora/auth.js?v=bday2" defer></script>
 </body>
 </html>

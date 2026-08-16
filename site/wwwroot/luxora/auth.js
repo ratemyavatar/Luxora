@@ -47,16 +47,58 @@
     return sel; // null = untouched
   }
 
+  /* The era Landing bundle builds its birthday <select>s through angular ng-options with
+     STRING month values ("Jan".."Dec") — "string:Jan" leaks into the DOM and breaks plain
+     reads. We swap the three selects for static ones with the era option set (same ids,
+     same era classes, same labels) so the markup stays authentic but the values are plain
+     numbers our glue can trust. */
+  function replaceBirthdaySelects() {
+    var specs = [
+      { id: "MonthDropdown", name: "birthdayMonth", cls: "month", ph: "Month",
+        opts: [["1","January"],["2","February"],["3","March"],["4","April"],["5","May"],["6","June"],
+               ["7","July"],["8","August"],["9","September"],["10","October"],["11","November"],["12","December"]] },
+      { id: "DayDropdown", name: "birthdayDay", cls: "day", ph: "Day",
+        opts: (function () { var a = []; for (var d = 1; d <= 31; d++) a.push([String(d), String(d)]); return a; })() },
+      { id: "YearDropdown", name: "birthdayYear", cls: "year", ph: "Year",
+        opts: (function () { var a = []; var y = new Date().getFullYear(); for (var i = y; i >= y - 100; i--) a.push([String(i), String(i)]); return a; })() },
+    ];
+    for (var s = 0; s < specs.length; s++) {
+      var spec = specs[s];
+      var old = q("#" + spec.id);
+      if (!old || old.__luxoraStatic) continue;
+      var sel = document.createElement("select");
+      sel.id = spec.id; sel.name = spec.name;
+      sel.className = "input-field rbx-select " + spec.cls;
+      sel.__luxoraStatic = true;
+      var ph = document.createElement("option");
+      ph.value = ""; ph.textContent = spec.ph; ph.disabled = true; ph.selected = true;
+      sel.appendChild(ph);
+      for (var i = 0; i < spec.opts.length; i++) {
+        var o = document.createElement("option");
+        o.value = spec.opts[i][0]; o.textContent = spec.opts[i][1];
+        sel.appendChild(o);
+      }
+      old.parentNode.replaceChild(sel, old);
+    }
+    return !!(q("#MonthDropdown") && q("#MonthDropdown").__luxoraStatic);
+  }
+
+  function rawVal(el) {
+    // angular writes "string:Jan"/"number:15"/"?" into the DOM value; strip any prefix
+    var v = el ? String(el.value) : "";
+    if (v === "?") return "";
+    return v.replace(/^[a-z]+:/, "");
+  }
+
   function selVal(el) {
-    // angular ng-options stores real values in the model, NOT the DOM value attr
-    // (month values are "Jan".."Dec" strings; DOM shows index numbers). Read the model.
-    try {
-      if (window.angular) {
+    if (!el) return "";
+    try { // prefer the angular model when present (pre-swap era selects)
+      if (!el.__luxoraStatic && window.angular) {
         var c = angular.element(el).controller("ngModel");
         if (c && c.$modelValue !== undefined && c.$modelValue !== null && c.$modelValue !== "") return c.$modelValue;
       }
-    } catch (e) { /* fall through to raw read */ }
-    return el ? el.value : "";
+    } catch (e) { /* fall through */ }
+    return rawVal(el);
   }
 
   var MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
@@ -148,6 +190,7 @@
   function wire() {
     if (state.wired) return;
     var user = q("#signup-username"); if (!user) return;
+    replaceBirthdaySelects(); // static era-styled selects: plain numeric values, no angular string quirks
     state.wired = true;
     wireUsernameCheck();
     var root = formRoot();
@@ -162,7 +205,8 @@
 
   var iv = setInterval(function () {
     wire();
-    if (state.wired) clearInterval(iv);
+    replaceBirthdaySelects(); // no-op once swapped; keeps retrying until the era selects exist
+    if (state.wired && q("#MonthDropdown") && q("#MonthDropdown").__luxoraStatic) clearInterval(iv);
   }, 300);
   setTimeout(function () { clearInterval(iv); }, 30000);
 })();

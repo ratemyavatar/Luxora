@@ -66,6 +66,7 @@ public sealed class PageRenderMiddleware
                     .Replace("{{LUXORA_BASEURL}}", cfg.BaseUrl)
                     .Replace("{{LUXORA_TURNSTILE_SITEKEY}}", cfg.Captcha.Enabled ? cfg.Captcha.SiteKey : "");
                 ctx.Response.ContentType = "text/html; charset=utf-8";
+                ctx.Response.Headers.CacheControl = "no-cache"; // never serve a stale page shell
                 await ctx.Response.WriteAsync(html);
                 return;
             }
