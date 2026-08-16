@@ -42,15 +42,19 @@ public sealed class RobloxCookieAuth
         return CryptographicOperations.FixedTimeEquals(got, expected) && Guid.TryParseExact(sid, "N", out var g) ? g : null;
     }
 
-    public CookieOptions Options(DateTimeOffset? expires = null) => new()
+    public CookieOptions Options(DateTimeOffset? expires = null)
     {
-        HttpOnly = true,
-        Secure = _cfg.Security.CookieSecure,
-        SameSite = SameSiteMode.Lax,
-        Domain = _cfg.CookieDomain,
-        Expires = expires ?? DateTimeOffset.UtcNow.AddDays(30),
-        Path = "/"
-    };
+        var o = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = _cfg.Security.CookieSecure,
+            SameSite = SameSiteMode.Lax,
+            Expires = expires ?? DateTimeOffset.UtcNow.AddDays(30),
+            Path = "/"
+        };
+        if (!string.IsNullOrWhiteSpace(_cfg.CookieDomain)) o.Domain = _cfg.CookieDomain; // blank = localhost-friendly
+        return o;
+    }
 
     private byte[] Sign(string sid)
     {
