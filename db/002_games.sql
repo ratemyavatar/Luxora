@@ -50,26 +50,3 @@ create table if not exists user_recent_game (
     primary key (user_id, game_id)
 );
 create index if not exists ix_user_recent_game_time on user_recent_game(user_id, last_played desc);
-
--- Actual Luxora grid entries. These are database records, not stale names copied from
--- the archived page. Their RCC place files can be attached later by setting place.rcc_file.
-insert into game (name, description, creator_id, max_players)
-select v.name, v.description, u.id, v.max_players
-from users u
-cross join (values
-    ('Luxora Baseplate', 'Build, meet friends, and test classic 2020 physics.', 20),
-    ('Crossroads 2020', 'Classic brick battle on the Luxora grid.', 16),
-    ('Luxora Obby', 'A simple obstacle course for the revival launch.', 20),
-    ('Happy Home', 'Hang out in a familiar classic home.', 12),
-    ('Glass Houses', 'Classic arena combat restored for 2020 RCC.', 16),
-    ('Rocket Arena', 'Launch rockets and survive the arena.', 16),
-    ('Sword Fight Heights', 'Reach the top and master classic sword fighting.', 16),
-    ('Luxora Town', 'A social town running entirely on the Luxora grid.', 24)
-) as v(name, description, max_players)
-where u.id = (select min(id) from users)
-  and not exists (select 1 from game g where lower(g.name) = lower(v.name));
-
-insert into place (game_id, name, is_root_place)
-select g.id, g.name, true
-from game g
-where not exists (select 1 from place p where p.game_id = g.id and p.is_root_place);

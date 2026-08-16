@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "home1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "home2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -22,8 +22,14 @@ CSS_NAME_MAP = {  # data-bundlename -> held css file (study/10_static_assets/css
     "landing": "rbxlanding.css", "thumbnails": "rbxthumb.css", "captcha": "rbxCaptcha.css",
     "robuxicon": "rbxRobuxIcon.css", "leanbase": "leanbase.css", "login": "rbxlogin.css",
     "page": "page.css",
-    # The captured all-in-one StyleGuide sheet contains these 2020 home component rules.
-    "homeheader": "rbxstyle.css", "peoplelist": "rbxstyle.css", "placeslist": "rbxstyle.css",
+}
+# Exact component sheets captured with the authenticated 2022 home shell. Keep them
+# separate from the 2020 login/signup sheets: mixing bundle vintages broke the layout.
+HOME_CSS_NAME_MAP = {
+    "styleguide": "home2022-styleguide.css", "navigation": "home2022-navigation.css",
+    "footer": "home2022-footer.css", "thumbnails": "home2022-thumbnails.css",
+    "robuxicon": "home2022-robux.css", "peoplelist": "home2022-people-list.css",
+    "placeslist": "home2022-places-list.css", "homeheader": "home2022-header.css",
 }
 EMPTY_CSS = "/bundles/css/__empty.css"
 
@@ -52,6 +58,9 @@ def localize_css_urls(css: str, css_name: str) -> str:
     css = re.sub(r"url\(\s*[\"']?(?:https://web\.archive\.org)?/web/\d+im_/"
                  r"https://(?:static|css)\.rbxcdn\.com/([^\"')\s]+\." + IMG_EXTS + r")[\"']?\s*\)",
                  lambda mm: _img_rep(mm, "static"), css, flags=re.I)
+    # 2022 StyleGuide serves fonts directly from css.rbxcdn.com (no subdirectory).
+    css = re.sub(r"url\(\s*[\"']?https://css\.rbxcdn\.com/([0-9A-Za-z_\-]+\." + IMG_EXTS + r")[\"']?\s*\)",
+                 _css_asset_rep, css, flags=re.I)
     css = re.sub(r"url\(\s*[\"']?https://static\.rbxcdn\.com/([^\"')\s]+\." + IMG_EXTS + r")[\"']?\s*\)",
                  lambda mm: _img_rep(mm, "static"), css, flags=re.I)
     return css
@@ -63,6 +72,14 @@ def _archive_fallback(mm: re.Match, live: str) -> str:
     m = re.search(r"/web/(\d+)im_/(https?://[^\"')\s]+)", src)
     if m: return f"https://web.archive.org/web/{m.group(1)}im_/{m.group(2)}"
     return f"https://web.archive.org/web/2020im_/{live}"
+
+def _css_asset_rep(mm: re.Match) -> str:
+    fname = mm.group(1)
+    local = f"/bundles/img/{fname}"
+    if not (SITE_WWW / local.lstrip("/")).exists():
+        remote = f"https://css.rbxcdn.com/{fname}"
+        _MANIFEST.add(f"css|{remote}|https://web.archive.org/web/2022im_/{remote}|{local.lstrip('/')}")
+    return f"url({local})"
 
 def _img_rep(mm: re.Match, kind: str) -> str:
     fname = mm.group(1)
@@ -112,6 +129,8 @@ def env_urls_json() -> str:
         "accountSettingsApi": "/apisite/accountsettings",
         "gameInternationalizationApi": "/apisite/gameinternationalization",
         "translationRolesApi": "/apisite/translationroles",
+        "localizationTablesApi": "/apisite/localizationtables",
+        "twoStepVerificationApi": "/apisite/twostepverification",
         "privateMessagesApi": "/apisite/privatemessages",
         "notificationApi": "/apisite/notifications",
         "abtestingApiSite": "/apisite/abtesting",
@@ -121,6 +140,9 @@ def env_urls_json() -> str:
         "authAppSite": "",
         "websiteUrl": "",
         "apiProxyUrl": "/apisite/api",
+        "apiGatewayUrl": "/apisite/api",
+        "apiGatewayCdnUrl": "/apisite/api",
+        "universalAppConfigurationApi": "/apisite/api/universal-app-configuration",
         "api": "/apisite/api",
         "www": "",
         "amazonStoreLink": "#", "amazonWebStoreLink": "#", "appStoreLink": "#",
@@ -159,6 +181,11 @@ def prep(src: Path, name: str) -> Path:
         tag = mm.group(0)
         bn = re.search(r"data-bundlename\s*=\s*[\"']([^\"']+)", tag, re.I)
         local = held_js.get(bn.group(1).lower()) if bn else None
+        if name == "home":
+            digest = re.search(r'https://js\.rbxcdn\.com/([0-9a-f]+)\.js', tag, re.I)
+            exact = f"home2022-{digest.group(1)}.js" if digest else ""
+            if exact and (SITE_WWW / "bundles/js" / exact).exists(): local = exact
+            else: local = None  # never mix the 2020 login JS with the 2022 home shell
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
         return re.sub(r'src\s*=\s*["\'][^"\']*["\']', f'src="{new_src}"', tag, count=1)
     t = re.sub(r"<script[^>]*src\s*=\s*[\"']https://js\.rbxcdn\.com/[^\"']+[\"'][^>]*>", js_repl, t, flags=re.I)
@@ -167,11 +194,13 @@ def prep(src: Path, name: str) -> Path:
     def css_repl(mm: re.Match) -> str:
         tag = mm.group(0)
         bn = re.search(r"data-bundlename\s*=\s*[\"']([^\"']+)", tag, re.I)
-        local = CSS_NAME_MAP.get(bn.group(1).lower()) if bn else None
+        css_map = HOME_CSS_NAME_MAP if name == "home" else CSS_NAME_MAP
+        local = css_map.get(bn.group(1).lower()) if bn else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
         return re.sub(r'href\s*=\s*["\'][^"\']*["\']', f'href="{new}"', tag, count=1)
     t = re.sub(r"<link[^>]*href\s*=\s*[\"']https://css\.rbxcdn\.com/[^\"']+[\"'][^>]*>", css_repl, t, flags=re.I)
     LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
+    if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
     t = re.sub(r'href=["\']https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)

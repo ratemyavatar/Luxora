@@ -100,10 +100,10 @@ public sealed class UserService
 
     private sealed class UserCred
     {
-        public long Id;
-        public string Username = "";
-        public string PasswordHash = "";
-        public short AccountStatus;
+        public long Id { get; set; }
+        public string Username { get; set; } = "";
+        public string PasswordHash { get; set; } = "";
+        public short AccountStatus { get; set; }
     }
 
     private sealed class Flood { public int Count; public DateTimeOffset Since = DateTimeOffset.UtcNow; }
