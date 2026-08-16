@@ -89,7 +89,7 @@ public sealed class ThumbnailController : ControllerBase
         var result = await _thumbs.RenderAsync(kind, targetId, width, height);
         Response.Headers.CacheControl = result.State == ThumbnailState.Completed ? "public,max-age=300" : "no-store";
         if (result.State == ThumbnailState.Completed && result.Url is not null) return Redirect(result.Url);
-        return Redirect("/bundles/img/__thumb.png");
+        return Redirect("/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg");
     }
 
     private static string State(ThumbnailState state) => state switch

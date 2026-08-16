@@ -18,7 +18,7 @@
         return "/bundles/img" + u.pathname.replace(/\.(png|jpg|jpeg|gif|ico|svg|webp)$/i, function (e) { return e; });
       if (/^(js|static)\.rbxcdn\.com$/.test(h)) return "/bundles/js/__404.js";
       if (/^css\.rbxcdn\.com$/.test(h)) return "/bundles/css/__empty.css";
-      if (/^t\d\.rbxcdn\.com$/.test(h)) return "/bundles/img/__thumb.png";
+      if (/^t\d\.rbxcdn\.com$/.test(h)) return "/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg";
       var svc = h.split(".")[0];
       if (SERVICES.indexOf(svc) !== -1 && /\.roblox\.com$/.test(h) || /\.roblox\.plus$/.test(h))
         return "/apisite/" + svc + u.pathname + u.search;
