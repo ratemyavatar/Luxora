@@ -134,7 +134,17 @@ public sealed class MetaController : ControllerBase
 
     [HttpGet("/apisite/captcha/v1/metadata")]
     [HttpGet("/apisite/captcha/v1/captcha/metadata")]
-    public IActionResult CaptchaMeta() => Ok(new { enabled = false }); // era Funcaptcha metadata: off — our glue injects Turnstile instead
+    public IActionResult CaptchaMeta() => Ok(new
+    {
+        enabled = false,               // era Funcaptcha off — our glue injects Turnstile instead
+        funCaptchaPublicKeys = Array.Empty<object>(), // era bundle forEach()es this at boot; missing = crash chain
+    });
+
+    // era page telemetry: www-level beacons the bundles fire constantly
+    [AcceptVerbs("GET", "POST")]
+    [Route("/game/report-event")]
+    [Route("/game/report-stats")]
+    public IActionResult ReportEvent() => NoContent();
 
     [HttpGet("/apisite/metrics/v1/thumbnails/metadata")]
     public IActionResult ThumbMeta() => Ok(new { isWebappCacheEnabled = false });

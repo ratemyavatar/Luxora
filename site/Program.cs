@@ -33,6 +33,22 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex) { app.Logger.LogError("POSTGRES NOT REACHABLE — run db/README.md steps. {msg}", ex.Message); }
 }
 
+// see the REAL exception behind any 500 in the console (era-shaped 500 to the client)
+app.Use(async (ctx, next) =>
+{
+    try { await next(); }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[luxora][500] {ctx.Request.Method} {ctx.Request.Path}\n{ex}\n");
+        if (!ctx.Response.HasStarted)
+        {
+            ctx.Response.StatusCode = 500;
+            ctx.Response.ContentType = "application/json";
+            await ctx.Response.WriteAsJsonAsync(new { errors = new[] { new { code = 500, message = "Something went wrong. Try again." } } });
+        }
+    }
+});
+
 // real client IP behind Cloudflare
 app.UseMiddleware<CloudflareIpMiddleware>();
 

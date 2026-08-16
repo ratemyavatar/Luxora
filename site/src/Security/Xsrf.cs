@@ -47,7 +47,10 @@ public sealed class XsrfMiddleware
     {
         var path = ctx.Request.Path.Value ?? "";
         var isApi = path.StartsWith("/apisite/", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/api/", StringComparison.OrdinalIgnoreCase);
-        if (isApi && Mutating.Contains(ctx.Request.Method))
+        // era telemetry beacons POST without tokens and would just spam 403s — exempt
+        var isTelemetry = path.StartsWith("/apisite/metrics/", StringComparison.OrdinalIgnoreCase)
+                       || path.StartsWith("/apisite/abtesting/", StringComparison.OrdinalIgnoreCase);
+        if (isApi && !isTelemetry && Mutating.Contains(ctx.Request.Method))
         {
             var subject = Subject(ctx);
             // LoginNegotiate for client joins is authenticated differently; phase-1 exempt none.
