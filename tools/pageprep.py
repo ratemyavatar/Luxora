@@ -52,6 +52,14 @@ def localize_css_urls(css: str, css_name: str) -> str:
                  lambda mm: _img_rep(mm, "static"), css, flags=re.I)
     return css
 
+def _archive_fallback(mm: re.Match, live: str) -> str:
+    """Original capture URL if the source had a wayback link (exact timestamp =
+    guaranteed hit); otherwise a generic 2020 wayback guess."""
+    src = mm.group(0)
+    m = re.search(r"/web/(\d+)im_/(https?://[^\"')\s]+)", src)
+    if m: return f"https://web.archive.org/web/{m.group(1)}im_/{m.group(2)}"
+    return f"https://web.archive.org/web/2020im_/{live}"
+
 def _img_rep(mm: re.Match, kind: str) -> str:
     fname = mm.group(1)
     local = f"/bundles/img/{'staticcdn/' if kind == 'static' else ''}{fname}"
@@ -62,7 +70,7 @@ def _img_rep(mm: re.Match, kind: str) -> str:
         else:
             host = "css.rbxcdn.com" if "css.rbxcdn.com" in mm.group(0) else "static.rbxcdn.com"
             remote = f"https://{host}/{fname}"
-        _MANIFEST.add(f"{kind}|{remote}|{local.lstrip('/')}")
+        _MANIFEST.add(f"{kind}|{remote}|{_archive_fallback(mm, remote)}|{local.lstrip('/')}")
     return f"url({local})"
 
 def brace_extract(text: str, start: int) -> tuple[str, int]:
@@ -159,7 +167,7 @@ def prep(src: Path, name: str) -> Path:
         held = idx.get(h)
         if held: return "/bundles/img/" + held
         local = f"bundles/img/{h}.{ext}"
-        _MANIFEST.add(f"images|https://images.rbxcdn.com/{h}.{ext}|{local}")
+        _MANIFEST.add(f"images|https://images.rbxcdn.com/{h}.{ext}|https://web.archive.org/web/2020im_/https://images.rbxcdn.com/{h}.{ext}|{local}")
         return "/" + local
     t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-fA-Z\-]+)\.(png|jpg|jpeg|gif|ico|svg|webp)', img_sub, t)
     t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-f]{16,64})(?=[\s"\'\)])', img_sub, t)
@@ -177,7 +185,9 @@ def prep(src: Path, name: str) -> Path:
     needed_mods = set(re.findall(r'ng-modules\s*=\s*"([^"]+)"', t))
     needed_mods |= set(re.findall(r'ng-app\s*=\s*"([^"]+)"', t))
     definers = {}
-    for f in (STUDY / "10_static_assets/js/js").glob("*.js"):
+    held_dir = STUDY / "10_static_assets/js/js"
+    if not held_dir.is_dir(): held_dir = SITE_WWW / "bundles/js"
+    for f in held_dir.glob("*.js"):
         try: txt = f.read_text(encoding="utf-8", errors="replace")
         except OSError: continue
         for modname in re.findall(r'angular\.module\("([^"]+)"\s*,\s*\[', txt):
@@ -209,6 +219,9 @@ def sync_assets():
     for src_rel, dst_rel in pairs:
         src, dst = STUDY / src_rel, SITE_WWW / dst_rel
         dst.mkdir(parents=True, exist_ok=True)
+        if not src.is_dir():
+            print(f"[pageprep] WARN study source missing ({src}) - keeping already-synced {dst_rel}")
+            continue
         for f in src.iterdir():
             if f.is_file(): shutil.copy2(f, dst / f.name)
     (SITE_WWW / "bundles/css/__empty.css").write_text("/* luxora: bundle not cached (safe to 404-style empty) */\n")

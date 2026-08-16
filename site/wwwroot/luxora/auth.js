@@ -47,10 +47,25 @@
     return sel; // null = untouched
   }
 
+  function selVal(el) {
+    // angular ng-options stores real values in the model, NOT the DOM value attr
+    // (month values are "Jan".."Dec" strings; DOM shows index numbers). Read the model.
+    try {
+      if (window.angular) {
+        var c = angular.element(el).controller("ngModel");
+        if (c && c.$modelValue !== undefined && c.$modelValue !== null && c.$modelValue !== "") return c.$modelValue;
+      }
+    } catch (e) { /* fall through to raw read */ }
+    return el ? el.value : "";
+  }
+
+  var MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+
   function birthday() {
     var m = q("#MonthDropdown"), d = q("#DayDropdown"), y = q("#YearDropdown");
     if (!m || !d || !y) return null;
-    var mv = parseInt(m.value, 10), dv = parseInt(d.value, 10), yv = parseInt(y.value, 10);
+    var mv = MONTHS[String(selVal(m)).slice(0, 3).toLowerCase()] || parseInt(selVal(m), 10);
+    var dv = parseInt(selVal(d), 10), yv = parseInt(selVal(y), 10);
     if (!mv || !dv || !yv) return null;
     return yv + "-" + String(mv).padStart(2, "0") + "-" + String(dv).padStart(2, "0");
   }

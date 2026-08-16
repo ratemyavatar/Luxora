@@ -12,16 +12,16 @@ $ok = 0; $fail = 0
 foreach ($line in Get-Content $manifest) {
     if ([string]::IsNullOrWhiteSpace($line)) { continue }
     $parts = $line.Split('|')
-    if ($parts.Count -ne 3) { continue }
-    $kind, $remote, $rel = $parts
+    if ($parts.Count -lt 3) { continue }
+    if ($parts.Count -eq 4) { $kind, $remote, $arch, $rel = $parts }
+    else { $kind, $remote, $rel = $parts; $arch = 'https://web.archive.org/web/2020im_/' + $remote }
     $dest = Join-Path (Join-Path $repo 'site\wwwroot') $rel
     if (Test-Path $dest) { $ok++; continue }
 
-    # candidate URLs: live CDN first (+ extensionless twin), then wayback
+    # candidate URLs: live CDN first (+ extensionless twin), then wayback (exact capture ts)
     $cands = @($remote)
     if ($remote -match '^(https://images\.rbxcdn\.com/[0-9a-fA-F]+)\.\w+$') { $cands += $Matches[1] }
-    $arch = $remote -replace '^https://', 'https://web.archive.org/web/2020im_/https://'
-    $cands += $arch
+    if ($arch) { $cands += $arch }
 
     New-Item -ItemType Directory -Force -Path (Split-Path $dest) | Out-Null
     $got = $false
