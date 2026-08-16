@@ -42,13 +42,37 @@ def brace_extract(text: str, start: int) -> tuple[str, int]:
 
 def env_urls_json() -> str:
     # kornet-style squash: {service}.roblox.com/{ver}... == /apisite/{service}/{ver}...
+    # NOTE: era bundles READ THESE AT LOAD (CoreRobloxUtilities does `EnvUrls.xApi.replace(...)`
+    # at module scope -> undefined key kills the whole script chain and blanks the page).
     services = ["accountinformation","accountsettings","ads","api","auth","avatar","badges","billing",
-                "captcha","catalog","chat","contacts","develop","economy","ecsv2","followings","friends",
-                "games","groups","inventory","itemconfiguration","locale","metrics","notifications",
-                "premiumfeatures","presence","privatemessages","publish","thumbnails","trades","users","voice","abtesting","search"]
+                "captcha","catalog","chat","contacts","develop","economy","ecsv2","engagementpayouts",
+                "followings","friends","gameinternationalization","games","groups","inventory",
+                "itemconfiguration","locale","metrics","moderation","notifications","points",
+                "premiumfeatures","presence","privatemessages","publish","textfilter","thumbnails",
+                "trades","translationroles","twostepverification","users","usermoderation","voice",
+                "abtesting","search"]
     m = {f"{s}Api": f"/apisite/{s}" for s in services}
-    m.update({"accountInformationApi": m["accountinformationApi"], "authApi": m["authApi"], "gameApi": m["gamesApi"]})
-    m["domain"] = "luxora.wtf"; m["api"] = "/apisite/api"; m["www"] = ""
+    # era code uses several hard-coded alias spellings; provide every one the bundles touch
+    m.update({
+        "accountInformationApi": "/apisite/accountinformation",
+        "accountSettingsApi": "/apisite/accountsettings",
+        "gameInternationalizationApi": "/apisite/gameinternationalization",
+        "translationRolesApi": "/apisite/translationroles",
+        "privateMessagesApi": "/apisite/privatemessages",
+        "notificationApi": "/apisite/notifications",
+        "abtestingApiSite": "/apisite/abtesting",
+        "thumbnailsApi": "/apisite/thumbnails",
+        "gameApi": "/apisite/games",
+        "authApi": "/apisite/auth",
+        "authAppSite": "",
+        "websiteUrl": "",
+        "apiProxyUrl": "/apisite/api",
+        "api": "/apisite/api",
+        "www": "",
+        "amazonStoreLink": "#", "amazonWebStoreLink": "#", "appStoreLink": "#",
+        "googlePlayStoreLink": "#", "windowsStoreLink": "#", "xboxStoreLink": "#",
+    })
+    m["domain"] = "luxora.wtf"
     return json.dumps(m)
 
 def prep(src: Path, name: str) -> Path:
@@ -96,8 +120,27 @@ def prep(src: Path, name: str) -> Path:
     t = re.sub(r'https?://[sb]?\.?scorecardresearch\.com[^"\')\s]*', '/apisite/metrics/beacon', t)
     t = re.sub(r'https://js\.sentry[^"\')\s]*', '/luxora/off.js', t)
 
+    # 3b) ng-modules/ng-app reference angular modules defined in hash-named bundles with no
+    # data-bundlename (e.g. baseTemplateApp). Find the held bundle that DEFINES each referenced
+    # module and make sure it's loaded, else the app bootstrap dies -> blank page.
+    needed_mods = set(re.findall(r'ng-modules\s*=\s*"([^"]+)"', t))
+    needed_mods |= set(re.findall(r'ng-app\s*=\s*"([^"]+)"', t))
+    definers = {}
+    for f in (STUDY / "10_static_assets/js/js").glob("*.js"):
+        try: txt = f.read_text(encoding="utf-8", errors="replace")
+        except OSError: continue
+        for modname in re.findall(r'angular\.module\("([^"]+)"\s*,\s*\[', txt):
+            definers.setdefault(modname, f.name)
+    inject = []
+    for mod in sorted(needed_mods):
+        f = definers.get(mod)
+        if f and f"/bundles/js/{f}" not in t:
+            inject.append(f'<script type="text/javascript" src="/bundles/js/{f}"></script>')
+    if inject:
+        t = re.sub(r"</body>", "\n" + "\n".join(inject) + "\n</body>", t, count=1, flags=re.I)
+
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
-    t = re.sub(r"(<head[^>]*>)", r"\1\n<script src=\"/luxora/hostshim.js\"></script>", t, count=1, flags=re.I)
+    t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js"></script>', t, count=1, flags=re.I)
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'
             '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>\n'

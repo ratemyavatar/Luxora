@@ -4,7 +4,7 @@
 <html>
 <!--<![endif]-->
 <head data-machine-id="WEB594">
-<script src=\"/luxora/hostshim.js\"></script>
+<script src="/luxora/hostshim.js"></script>
     <!-- MachineID: WEB594 -->
     <title>Roblox</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,requiresActiveX=true" />
@@ -443,7 +443,7 @@ Roblox.BundleDetector.setTiming(window.performance.timing);
 <script type="text/javascript">
     var Roblox = Roblox || {};
     Roblox.EnvironmentUrls = Roblox.EnvironmentUrls || {};
-    Roblox.EnvironmentUrls = {"accountinformationApi": "/apisite/accountinformation", "accountsettingsApi": "/apisite/accountsettings", "adsApi": "/apisite/ads", "apiApi": "/apisite/api", "authApi": "/apisite/auth", "avatarApi": "/apisite/avatar", "badgesApi": "/apisite/badges", "billingApi": "/apisite/billing", "captchaApi": "/apisite/captcha", "catalogApi": "/apisite/catalog", "chatApi": "/apisite/chat", "contactsApi": "/apisite/contacts", "developApi": "/apisite/develop", "economyApi": "/apisite/economy", "ecsv2Api": "/apisite/ecsv2", "followingsApi": "/apisite/followings", "friendsApi": "/apisite/friends", "gamesApi": "/apisite/games", "groupsApi": "/apisite/groups", "inventoryApi": "/apisite/inventory", "itemconfigurationApi": "/apisite/itemconfiguration", "localeApi": "/apisite/locale", "metricsApi": "/apisite/metrics", "notificationsApi": "/apisite/notifications", "premiumfeaturesApi": "/apisite/premiumfeatures", "presenceApi": "/apisite/presence", "privatemessagesApi": "/apisite/privatemessages", "publishApi": "/apisite/publish", "thumbnailsApi": "/apisite/thumbnails", "tradesApi": "/apisite/trades", "usersApi": "/apisite/users", "voiceApi": "/apisite/voice", "abtestingApi": "/apisite/abtesting", "searchApi": "/apisite/search", "accountInformationApi": "/apisite/accountinformation", "gameApi": "/apisite/games", "domain": "luxora.wtf", "api": "/apisite/api", "www": ""};
+    Roblox.EnvironmentUrls = {"accountinformationApi": "/apisite/accountinformation", "accountsettingsApi": "/apisite/accountsettings", "adsApi": "/apisite/ads", "apiApi": "/apisite/api", "authApi": "/apisite/auth", "avatarApi": "/apisite/avatar", "badgesApi": "/apisite/badges", "billingApi": "/apisite/billing", "captchaApi": "/apisite/captcha", "catalogApi": "/apisite/catalog", "chatApi": "/apisite/chat", "contactsApi": "/apisite/contacts", "developApi": "/apisite/develop", "economyApi": "/apisite/economy", "ecsv2Api": "/apisite/ecsv2", "engagementpayoutsApi": "/apisite/engagementpayouts", "followingsApi": "/apisite/followings", "friendsApi": "/apisite/friends", "gameinternationalizationApi": "/apisite/gameinternationalization", "gamesApi": "/apisite/games", "groupsApi": "/apisite/groups", "inventoryApi": "/apisite/inventory", "itemconfigurationApi": "/apisite/itemconfiguration", "localeApi": "/apisite/locale", "metricsApi": "/apisite/metrics", "moderationApi": "/apisite/moderation", "notificationsApi": "/apisite/notifications", "pointsApi": "/apisite/points", "premiumfeaturesApi": "/apisite/premiumfeatures", "presenceApi": "/apisite/presence", "privatemessagesApi": "/apisite/privatemessages", "publishApi": "/apisite/publish", "textfilterApi": "/apisite/textfilter", "thumbnailsApi": "/apisite/thumbnails", "tradesApi": "/apisite/trades", "translationrolesApi": "/apisite/translationroles", "twostepverificationApi": "/apisite/twostepverification", "usersApi": "/apisite/users", "usermoderationApi": "/apisite/usermoderation", "voiceApi": "/apisite/voice", "abtestingApi": "/apisite/abtesting", "searchApi": "/apisite/search", "accountInformationApi": "/apisite/accountinformation", "accountSettingsApi": "/apisite/accountsettings", "gameInternationalizationApi": "/apisite/gameinternationalization", "translationRolesApi": "/apisite/translationroles", "privateMessagesApi": "/apisite/privatemessages", "notificationApi": "/apisite/notifications", "abtestingApiSite": "/apisite/abtesting", "gameApi": "/apisite/games", "authAppSite": "", "websiteUrl": "", "apiProxyUrl": "/apisite/api", "api": "/apisite/api", "www": "", "amazonStoreLink": "#", "amazonWebStoreLink": "#", "appStoreLink": "#", "googlePlayStoreLink": "#", "windowsStoreLink": "#", "xboxStoreLink": "#", "domain": "luxora.wtf"};
     // please keep the list in alphabetical order
     var additionalUrls = {
         amazonStoreLink: "https://www.amazon.com/Roblox-Corporation/dp/B00NUF4YOA",
@@ -952,6 +952,9 @@ Roblox.Endpoints.Urls = Roblox.Endpoints.Urls || {};
     <script onerror='Roblox.BundleDetector && Roblox.BundleDetector.reportBundleError(this)' data-monitor='true' data-bundlename='pageEnd' type='text/javascript' src="/bundles/js/pageEnd.js"></script>
 
 
+
+<script type="text/javascript" src="/bundles/js/baseTemplateApp.js"></script>
+<script type="text/javascript" src="/bundles/js/pageTemplateApp.js"></script>
 <script>
 window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",
   baseUrl: "{{LUXORA_BASEURL}}" };

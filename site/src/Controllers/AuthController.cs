@@ -121,15 +121,58 @@ public sealed class MetaController : ControllerBase
     [AcceptVerbs("GET", "POST")]
     public IActionResult BundleMetrics() => NoContent();
 
+    // era tracking pixel: a 204 here renders as a broken-image icon in the corner of the
+    // page — serve a real transparent 1x1 GIF so it stays invisible like the original.
+    private static readonly byte[] PixelGif = Convert.FromBase64String(
+        "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+
     [Route("/timg/rbx")]
-    public IActionResult Timg() => NoContent();
+    public IActionResult Timg() => File(PixelGif, "image/gif");
 
     [HttpGet("/apisite/abtesting/v1/enrollments")]
     public IActionResult Enrollments() => Ok(new { data = new { } });
 
     [HttpGet("/apisite/captcha/v1/metadata")]
+    [HttpGet("/apisite/captcha/v1/captcha/metadata")]
     public IActionResult CaptchaMeta() => Ok(new { enabled = false }); // era Funcaptcha metadata: off — our glue injects Turnstile instead
+
+    [HttpGet("/apisite/metrics/v1/thumbnails/metadata")]
+    public IActionResult ThumbMeta() => Ok(new { isWebappCacheEnabled = false });
 
     [HttpGet("/apisite/abtesting/v1/get-enrollments")]
     public IActionResult GetEnrollments() => Ok(new { data = new { } });
+
+    // ---- locale (era footer language selector needs these or it crashes its render) ----
+    private static readonly object EnglishLocale = new
+    {
+        locale = new
+        {
+            locale = "en_us",
+            name = new { name = "English", nativeName = "English" },
+            language = new { id = 1, languageCode = "en", englishName = "English", nativeName = "English" },
+        },
+        name = "English",
+        nativeName = "English",
+        isEnabledForFullExperience = true,
+    };
+
+    [HttpGet("/apisite/locale/v1/locales/supported-locales")]
+    public IActionResult SupportedLocales() => Ok(new { supportedLocales = new[] { EnglishLocale } });
+
+    // the era footer dataStore reads e.data as the array itself from GET /v1/locales
+    [HttpGet("/apisite/locale/v1/locales")]
+    public IActionResult Locales() => Ok(new { data = new[] { EnglishLocale } });
+
+    [HttpGet("/apisite/locale/v1/locales/user-localization-locus-supported-locales")]
+    public IActionResult LocusLocales() => Ok(new
+    {
+        ugc = new { locale = "en_us" },
+        signupAndLogin = new { locale = "en_us" },
+    });
+
+    [HttpGet("/apisite/locale/v1/locales/user-locale")]
+    public IActionResult UserLocale() => Ok(new { supportedLocale = new { locale = "en_us" } });
+
+    [HttpPost("/apisite/locale/v1/locales/set-user-supported-locale")]
+    public IActionResult SetUserSupportedLocale() => Ok(new { });
 }
