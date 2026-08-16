@@ -19,10 +19,11 @@ sourced from `github.com/rytiufi1/kornet` (their production setup) — see `ATTR
 | `FETCH_CONTENT.sh` | pulls the stock `content/`, `platformcontent/`, `shaders/`, `ExtraContent*` trees (~360MB, intentionally not committed) |
 
 ## First-time setup (per grid machine)
-```bash
-bash grid/FETCH_CONTENT.sh        # fills content/platformcontent/shaders/ExtraContent
-# edit grid/RCCService2020/AppSettings.xml  ->  <BaseUrl>http://YOUR-LUXORA-HOST</BaseUrl>
+On the Windows VPS, use the exact sparse-copy installer (preferred):
+```powershell
+powershell -ExecutionPolicy Bypass -File grid\FETCH_CONTENT.ps1
 ```
+It fills `content`, `platformcontent`, `shaders`, `ExtraContent`, and `ExtraContent2020` from the exact kornet RCC build. `FETCH_CONTENT.sh` is only a CDN fallback; some old CDN packages now return 403 and are not sufficient by themselves.
 
 ## Running a node (Windows grid box)
 ```
