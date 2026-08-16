@@ -1,0 +1,37 @@
+<div class="headline">
+    <h2>Basic Settings</h2>
+</div>
+<span id="userData" style="display: none;" data-name="[REDACTED USERNAME]" data-place-number="11">{0}&#39;s Place Number: {1}</span>
+<label class="form-label" for="Name">Name:</label>
+<input autofocus="" class="input-validation-error text-box text-box-medium" data-val="true" data-val-regex="Illegal characters" data-val-regex-pattern="^[^&lt;>]+$" data-val-required="Name is required" id="Name" name="Name" type="text" value="" />
+<span id="nameRow"><span class="field-validation-error" data-valmsg-for="Name" data-valmsg-replace="true">Name is required</span></span>
+
+<label class="form-label" for="Description">Description:</label>
+<div>
+    <span>If you have built <a>Premium benefits</a> into your experience, please list those benefits in the description.</span>
+</div>
+<textarea class="text-box text-area-medium" cols="80" id="Description" maxlength="1000" name="Description" rows="6">
+</textarea>
+<span class="field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+
+
+<label class="form-label" for="Genre">Genre:</label>
+<select class="form-select no-margins" id="Genre" name="Genre"><option selected="selected">All</option>
+<option>Adventure</option>
+<option>Building</option>
+<option>Comedy</option>
+<option>Fighting</option>
+<option>FPS</option>
+<option>Horror</option>
+<option>Medieval</option>
+<option>Military</option>
+<option>Naval</option>
+<option>RPG</option>
+<option>Sci-Fi</option>
+<option>Sports</option>
+<option>Town and City</option>
+<option>Western</option>
+</select>
+<span class="field-validation-valid" data-valmsg-for="Genre" data-valmsg-replace="true"></span>
+
+<input data-val="true" data-val-number="The field TemplateID must be a number." id="TemplateID" name="TemplateID" type="hidden" value="" />
