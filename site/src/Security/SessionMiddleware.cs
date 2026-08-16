@@ -59,6 +59,8 @@ public sealed class PageRenderMiddleware
         ["/"] = "landing",                 // logged-out landing = 2020 signup experience
         ["/signup"] = "landing",
         ["/login"] = "login",
+        ["/newlogin"] = "login",
+        ["/login/default.aspx"] = "login",
         ["/home"] = "home",
     };
 
@@ -66,8 +68,9 @@ public sealed class PageRenderMiddleware
     {
         if ((ctx.Request.Method == "GET") && Routes.TryGetValue(ctx.Request.Path.Value?.TrimEnd('/').Length == 0 ? "/" : ctx.Request.Path.Value ?? "", out var page))
         {
-            // era: signed-in users never see landing/login; home is private.
-            if (ctx.Items["luxora.userId"] is not null && (page == "landing" || page == "login"))
+            // Signed-in users skip signup, but /login remains directly testable and can
+            // switch accounts (the captured navigation currently has no reliable logout UI).
+            if (ctx.Items["luxora.userId"] is not null && page == "landing")
             { ctx.Response.Redirect("/home"); return; }
             if (page == "home" && ctx.Items["luxora.userId"] is null)
             { ctx.Response.Redirect("/login?returnUrl=%2Fhome"); return; }

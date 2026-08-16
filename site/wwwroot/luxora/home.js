@@ -34,12 +34,11 @@
     text(q(".user-name-container a", host), me.displayName || me.name);
   }
 
-  /* PeopleList bundle hides the complete section when the user has no friends. */
+  /* Exact PeopleList section/card structure; keep its empty row visible as requested. */
   function renderFriends(friends) {
     var host = q("#people-list-container");
     if (!host) return;
     host.innerHTML = "";
-    if (!friends.length) return;
     var section = el('<div class="col-xs-12 people-list-container"><div class="section home-friends"><div class="container-header people-list-header"><h3>Friends<span class="friends-count"></span></h3><a href="/users/friends" class="btn-secondary-xs btn-more see-all-link-icon">See All</a></div><div class="section-content remove-panel people-list"><ul class="hlist"></ul></div></div></div>');
     text(q(".friends-count", section), "(" + friends.length + ")");
     var list = q("ul", section);
@@ -76,10 +75,9 @@
     if (!host) return;
     host.innerHTML = "";
     sorts.forEach(function (sort) {
-      if (!sort.games || !sort.games.length) return;
       var section = el('<div class="game-home-page-container"><div class="game-home-page-carousel-title"><h2></h2><a href="/discover" class="btn-secondary-xs btn-more see-all-link-icon">See All</a></div><div class="game-carousel"></div></div>');
       text(q("h2", section), sort.displayName);
-      sort.games.forEach(function (game) { q(".game-carousel", section).appendChild(gameCard(game)); });
+      (sort.games || []).forEach(function (game) { q(".game-carousel", section).appendChild(gameCard(game)); });
       host.appendChild(section);
     });
   }

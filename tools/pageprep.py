@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "home2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "home3"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -186,6 +186,12 @@ def prep(src: Path, name: str) -> Path:
             exact = f"home2022-{digest.group(1)}.js" if digest else ""
             if exact and (SITE_WWW / "bundles/js" / exact).exists(): local = exact
             else: local = None  # never mix the 2020 login JS with the 2022 home shell
+            # Luxora binds these captured component structures to its own database.
+            # Loading their original bootstraps too would race and erase empty rows.
+            component = bn.group(1).lower() if bn else ""
+            if component in {"peoplelist", "placeslist", "homeheader", "homepageupsellcard", "avatarshophomepagerecommendations",
+                             "accountsecurityprompt", "gamelaunch"}:
+                local = None
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
         return re.sub(r'src\s*=\s*["\'][^"\']*["\']', f'src="{new_src}"', tag, count=1)
     t = re.sub(r"<script[^>]*src\s*=\s*[\"']https://js\.rbxcdn\.com/[^\"']+[\"'][^>]*>", js_repl, t, flags=re.I)
@@ -244,7 +250,7 @@ def prep(src: Path, name: str) -> Path:
         f = definers.get(mod)
         if f and f"/bundles/js/{f}" not in t:
             inject.append(f'<script type="text/javascript" src="/bundles/js/{f}"></script>')
-    if inject:
+    if inject and name != "home":
         t = re.sub(r"</body>", "\n" + "\n".join(inject) + "\n</body>", t, count=1, flags=re.I)
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
