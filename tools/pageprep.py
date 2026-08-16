@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "bday3"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "login1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -140,7 +140,9 @@ def prep(src: Path, name: str) -> Path:
         t = t[:m.start()] + "Roblox.EnvironmentUrls = " + env_urls_json() + t[end:]
 
     # 3) bundle scripts: js.rbxcdn.com hash -> /bundles/js/<BundleFile> (held set, matched by data-bundlename)
-    held_js = {p.stem.lower(): p.name for p in (STUDY / "10_static_assets/js/js").glob("*.js")}
+    held_js_dir = STUDY / "10_static_assets/js/js"
+    if not held_js_dir.is_dir(): held_js_dir = SITE_WWW / "bundles/js"  # study lib gone? used already-synced set
+    held_js = {p.stem.lower(): p.name for p in held_js_dir.glob("*.js")}
     def js_repl(mm: re.Match) -> str:
         tag = mm.group(0)
         bn = re.search(r"data-bundlename\s*=\s*[\"']([^\"']+)", tag, re.I)
@@ -157,7 +159,9 @@ def prep(src: Path, name: str) -> Path:
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
         return re.sub(r'href\s*=\s*["\'][^"\']*["\']', f'href="{new}"', tag, count=1)
     t = re.sub(r"<link[^>]*href\s*=\s*[\"']https://css\.rbxcdn\.com/[^\"']+[\"'][^>]*>", css_repl, t, flags=re.I)
-    t = re.sub(r'href=["\']https://static\.rbxcdn\.com/css/page___[0-9a-f]+_m\.css/fetch["\']', 'href="/bundles/css/page.css"', t, flags=re.I)
+    LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
+    t = re.sub(r'href=["\']https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']',
+               lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
 
     # 5) images: images.rbxcdn.com/{hash}(.ext) -> /bundles/img/<held file matching hash>;
@@ -239,9 +243,13 @@ def sync_assets():
 
 def write_manifest():
     out = ROOT / "tools" / "assets-manifest.txt"
-    lines = sorted(_MANIFEST)
+    existing = set()
+    if out.exists():
+        existing = {l.strip() for l in out.read_text(encoding="utf-8").splitlines() if l.strip()}
+    lines = sorted(existing | _MANIFEST)  # merge: later pages add entries without losing earlier ones
     out.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
-    if lines: print(f"[pageprep] {len(lines)} missing assets -> tools/assets-manifest.txt (run tools/fetch-assets.ps1 on the VPS)")
+    added = len(lines) - len(existing)
+    if lines: print(f"[pageprep] manifest: {len(lines)} entries ({added:+d} new) -> tools/assets-manifest.txt")
 
 if __name__ == "__main__":
     sync_assets()

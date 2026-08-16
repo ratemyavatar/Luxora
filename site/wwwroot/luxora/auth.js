@@ -173,9 +173,51 @@
     if (window.console) console.log("[luxora] signup wired");
   }
 
+  /* ---- phase 2: login ---- */
+  function loginRoot() { return q("#login-username") && (q("#login-container") || document.body); }
+
+  function submitLogin() {
+    if (state.busy) return;
+    clearErrs();
+    var cvalue = (q("#login-username") || {}).value || "";
+    var password = (q("#login-password") || {}).value || "";
+    if (!cvalue) return fieldErr("#login-username", "Please enter your username.");
+    if (!password) return fieldErr("#login-password", "Please enter your password.");
+    state.busy = true;
+    api("/apisite/auth/v2/login", {
+      body: JSON.stringify({ ctype: "Username", cvalue: cvalue, password: password })
+    }, function (status, j) {
+      state.busy = false;
+      if (status === 200 && (j.userId || j.user)) {
+        var m = /[?&]ReturnUrl=([^&]+)/i.exec(location.search);
+        location.href = (m ? decodeURIComponent(m[1]) : "/home");
+        return;
+      }
+      var e = (j.errors && j.errors[0]) || { code: 0, message: "Something went wrong. Try again." };
+      if (e.code === 1) { fieldErr("#login-username", e.message); fieldErr("#login-password", ""); }
+      else showErr(e.message);
+    });
+  }
+
+  function wireLogin() {
+    if (state.loginWired) return;
+    var user = q("#login-username"); if (!user) return;
+    state.loginWired = true;
+    var root = loginRoot();
+    root.addEventListener("submit", function (ev) { ev.preventDefault(); ev.stopPropagation(); submitLogin(); }, true);
+    document.addEventListener("click", function (ev) {
+      var b = ev.target.closest && ev.target.closest("[name='loginSubmit'],#login-submit,#login-button");
+      if (b && root.contains(b)) { ev.preventDefault(); ev.stopPropagation(); submitLogin(); }
+    }, true);
+    var pw = q("#login-password");
+    if (pw) pw.addEventListener("keydown", function (ev) { if (ev.key === "Enter") { ev.preventDefault(); submitLogin(); } });
+    if (window.console) console.log("[luxora] login wired");
+  }
+
   var iv = setInterval(function () {
     wire();
-    if (state.wired) clearInterval(iv);
+    wireLogin();
+    if (state.wired && (state.loginWired || !q("#login-container"))) clearInterval(iv);
   }, 300);
   setTimeout(function () { clearInterval(iv); }, 30000);
 })();

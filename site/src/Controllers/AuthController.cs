@@ -90,6 +90,54 @@ public sealed class AuthController : ControllerBase
         return Ok(new { userId = created.Id, starterRobux = _cfg.NewUser.StarterRobux });
     }
 
+    // ---- POST /apisite/auth/v2/login (era body: {ctype:"Username", cvalue, password}) ----
+    public sealed class LoginRequest
+    {
+        public string? Cvalue { get; set; }
+        public string? Ctype { get; set; }
+        public string? Password { get; set; }
+        public string? CaptchaToken { get; set; }      // era sends it when funCaptcha armed; we accept+ignore
+        public string? CaptchaProvider { get; set; }
+    }
+
+    [HttpPost("v2/login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest req)
+    {
+        var ip = HttpContext.Items["luxora.ip"] as string;
+        var ua = Request.Headers.UserAgent.ToString();
+
+        static IActionResult Err(int code, string msg, int http = 400)
+            => new ObjectResult(new { errors = new[] { new { code, message = msg } } }) { StatusCode = http };
+
+        if (string.IsNullOrWhiteSpace(req.Cvalue) || req.Password is null)
+            return Err(1, "Incorrect username or password. Please try again.");
+
+        var res = await _users.TryLogin(req.Cvalue, req.Password, ip, ua);
+        return res switch
+        {
+            UserService.LoginResult.Ok(var id, var name, var sid) => LoginOk(id, name, sid),
+            UserService.LoginResult.RateLimited => Err(7, "Too many attempts to login. Please try again in a few minutes."),
+            _ => Err(1, "Incorrect username or password. Please try again."),
+        };
+
+        IActionResult LoginOk(long id, string name, Guid sid)
+        {
+            Response.Cookies.Append(RobloxCookieAuth.CookieName, _cookie.Issue(sid), _cookie.Options());
+            return Ok(new { user = new { id, username = name }, userId = id });
+        }
+    }
+
+    // ---- POST /apisite/auth/v2/logout -> also authentication.roblox.com squash ----
+    [HttpPost("v2/logout")]
+    [HttpPost("/apisite/authentication/v2/logout")]
+    public async Task<IActionResult> Logout()
+    {
+        if (HttpContext.Items["luxora.sessionId"] is string sid && Guid.TryParseExact(sid, "N", out var g))
+            await _users.EndSession(g);
+        Response.Cookies.Append(RobloxCookieAuth.CookieName, "", _cookie.Options(DateTimeOffset.UnixEpoch));
+        return Ok(new { });
+    }
+
     private static DateOnly? ParseBirthday(string? s)
     {
         if (string.IsNullOrWhiteSpace(s)) return null;

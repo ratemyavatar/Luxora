@@ -90,6 +90,52 @@ public sealed class UserService
         => _db.Execute("insert into signup_event (username, ip, ok, fail_code) values (@username, @ip, false, @c)",
             new { username, ip, c = (int)code });
 
+    // ---- login ----
+    public abstract record LoginResult
+    {
+        public sealed record Ok(long Id, string Username, Guid SessionId) : LoginResult;
+        public sealed record BadCredentials : LoginResult;
+        public sealed record RateLimited : LoginResult;
+    }
+
+    private sealed class UserCred
+    {
+        public long Id;
+        public string Username = "";
+        public string PasswordHash = "";
+        public short AccountStatus;
+    }
+
+    private sealed class Flood { public int Count; public DateTimeOffset Since = DateTimeOffset.UtcNow; }
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Flood> _loginFlood = new();
+
+    /// <summary>Verify credentials, mint a session. Per-IP sliding-window flood breaker.</summary>
+    public async Task<LoginResult> TryLogin(string username, string password, string? ip, string? userAgent)
+    {
+        var key = ip ?? "?";
+        var now = DateTimeOffset.UtcNow;
+        var ent = _loginFlood.GetOrAdd(key, _ => new Flood());
+        lock (ent)
+        {
+            if (now - ent.Since > TimeSpan.FromMinutes(5)) { ent.Count = 0; ent.Since = now; }
+            if (++ent.Count > 15) return new LoginResult.RateLimited();
+        }
+
+        using var c = _db.Open();
+        var row = await c.QueryFirstOrDefaultAsync<UserCred>(
+            @"select id, username as Username, password_hash as PasswordHash, account_status as AccountStatus
+              from users where username_lower = lower(@u)", new { u = username.Trim() });
+        if (row is null || row.AccountStatus != 0 || !VerifyPassword(password, row.PasswordHash))
+            return new LoginResult.BadCredentials();
+
+        var sid = Guid.NewGuid();
+        await c.ExecuteAsync("insert into user_session (id, user_id, ip, user_agent) values (@sid, @uid, @ip, @ua)",
+            new { sid, uid = row.Id, ip, ua = Trunc(userAgent, 400) });
+        return new LoginResult.Ok(row.Id, row.Username, sid);
+    }
+
+    public Task EndSession(Guid sid) => _db.Execute("delete from user_session where id = @sid", new { sid });
+
     // ---- passwords: PBKDF2-SHA512, format v1$iter$salt$hash (no external deps) ----
     private static string HashPassword(string pw)
     {

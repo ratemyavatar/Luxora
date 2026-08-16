@@ -52,6 +52,9 @@ public sealed class PageRenderMiddleware
     {
         if ((ctx.Request.Method == "GET") && Routes.TryGetValue(ctx.Request.Path.Value?.TrimEnd('/').Length == 0 ? "/" : ctx.Request.Path.Value ?? "", out var page))
         {
+            // era: signed-in users never see landing/login — straight to home
+            if (ctx.Items["luxora.userId"] is not null && (page == "landing" || page == "login"))
+            { ctx.Response.Redirect("/home"); return; }
             var file = Path.Combine(_env.ContentRootPath, "wwwroot", "pages", page + ".htmltpl");
             if (File.Exists(file))
             {
