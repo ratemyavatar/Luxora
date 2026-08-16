@@ -83,13 +83,26 @@ public sealed class PageRenderMiddleware
                     _cache[file] = tpl;
                 }
                 var subject = XsrfMiddleware.Subject(ctx);
+                var nav = "";
+                if (tpl.Contains("{{LUXORA_UNIVERSAL_NAV}}", StringComparison.Ordinal))
+                {
+                    var navFile = Path.Combine(_env.ContentRootPath, "fragments", "universal-nav.htmltpl");
+                    if (!_cache.TryGetValue(navFile, out var navTemplate))
+                    {
+                        navTemplate = File.Exists(navFile) ? await File.ReadAllTextAsync(navFile) : "";
+                        _cache[navFile] = navTemplate;
+                    }
+                    nav = navTemplate;
+                }
                 var html = tpl
+                    .Replace("{{LUXORA_UNIVERSAL_NAV}}", nav)
                     .Replace("{{LUXORA_XSRF}}", xsrf.Issue(subject))
                     .Replace("{{LUXORA_BASEURL}}", cfg.BaseUrl)
                     .Replace("{{LUXORA_TURNSTILE_SITEKEY}}", cfg.Captcha.Enabled ? cfg.Captcha.SiteKey : "")
                     .Replace("{{LUXORA_USERID}}", ctx.Items["luxora.userId"] as string ?? "0")
                     .Replace("{{LUXORA_USERNAME}}", ctx.Items["luxora.username"] as string ?? "Guest")
                     .Replace("{{LUXORA_ISUNDER13}}", ctx.Items["luxora.isUnder13"] is bool under13 && under13 ? "true" : "false")
+                    .Replace("{{LUXORA_AGEBRACKET}}", ctx.Items["luxora.isUnder13"] is bool isUnder13 && isUnder13 ? "&lt;13" : "13+")
                     .Replace("{{LUXORA_CREATED}}", ctx.Items["luxora.created"] is DateTimeOffset created ? created.ToString("O") : "")
                     .Replace("{{LUXORA_THEME}}", ctx.Items["luxora.theme"] is short theme && theme == 1 ? "dark-theme" : "light-theme");
                 ctx.Response.ContentType = "text/html; charset=utf-8";

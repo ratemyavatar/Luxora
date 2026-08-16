@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "home3"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "home4"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -94,6 +94,18 @@ def _img_rep(mm: re.Match, kind: str) -> str:
         _MANIFEST.add(f"{kind}|{remote}|{_archive_fallback(mm, remote)}|{local.lstrip('/')}")
     return f"url({local})"
 
+def replace_div_by_id(text: str, element_id: str, replacement: str) -> str:
+    """Replace one captured div and all nested divs without rewriting its markup."""
+    start_match = re.search(r'<div\b[^>]*\bid=["\']' + re.escape(element_id) + r'["\'][^>]*>', text, re.I)
+    if not start_match: return text
+    depth = 0
+    for tag in re.finditer(r'<div\b[^>]*>|</div\s*>', text[start_match.start():], re.I):
+        depth += -1 if tag.group(0).lower().startswith('</') else 1
+        if depth == 0:
+            end = start_match.start() + tag.end()
+            return text[:start_match.start()] + replacement + text[end:]
+    return text
+
 def brace_extract(text: str, start: int) -> tuple[str, int]:
     """extract balanced {...} block starting at index of '{'"""
     depth, i = 0, start
@@ -154,6 +166,11 @@ def env_urls_json() -> str:
 def prep(src: Path, name: str) -> Path:
     t = src.read_text(encoding="utf-8", errors="replace")
 
+    # Authenticated content pages all receive one shared captured navbar/sidebar.
+    # Their source-specific navigation is removed, not restyled or redesigned.
+    if name not in {"landing", "login"}:
+        t = replace_div_by_id(t, "navigation-container", "{{LUXORA_UNIVERSAL_NAV}}")
+
     # Captured authenticated pages must never leak the archived account. Keep the
     # capture's attributes/markup, but make their values per-request template tokens.
     if name == "home":
@@ -189,8 +206,8 @@ def prep(src: Path, name: str) -> Path:
             # Luxora binds these captured component structures to its own database.
             # Loading their original bootstraps too would race and erase empty rows.
             component = bn.group(1).lower() if bn else ""
-            if component in {"peoplelist", "placeslist", "homeheader", "homepageupsellcard", "avatarshophomepagerecommendations",
-                             "accountsecurityprompt", "gamelaunch"}:
+            if component in {"navigation", "peoplelist", "placeslist", "homeheader", "homepageupsellcard",
+                             "avatarshophomepagerecommendations", "accountsecurityprompt", "gamelaunch"}:
                 local = None
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
         return re.sub(r'src\s*=\s*["\'][^"\']*["\']', f'src="{new_src}"', tag, count=1)
