@@ -1,0 +1,100 @@
+using Dapper;
+using Luxora.Security;
+
+namespace Luxora;
+
+/// <summary>
+/// Resolves .ROBLOSECURITY on every request into ctx.Items:
+///   "luxora.userId" (string), "luxora.username"
+/// </summary>
+public sealed class SessionMiddleware
+{
+    private readonly RequestDelegate _next;
+    public SessionMiddleware(RequestDelegate next) => _next = next;
+
+    private sealed class SessionUser
+    {
+        public long UserId { get; set; }
+        public string Username { get; set; } = "";
+        public bool IsUnder13 { get; set; }
+        public short Theme { get; set; }
+        public DateTimeOffset Created { get; set; }
+    }
+
+    public async Task Invoke(HttpContext ctx, RobloxCookieAuth auth, Db db)
+    {
+        var sid = auth.ReadSessionId(ctx.Request.Cookies[RobloxCookieAuth.CookieName]);
+        if (sid is { } id)
+        {
+            using var c = db.Open();
+            var r = await c.QueryFirstOrDefaultAsync<SessionUser>(
+                @"update user_session s set last_seen = now()
+                  from users u where s.id = @id and u.id = s.user_id and u.account_status = 0
+                  returning s.user_id as UserId, u.username::text as Username, u.is_under13 as IsUnder13,
+                            u.theme as Theme, u.created as Created", new { id });
+            if (r is not null)
+            {
+                ctx.Items["luxora.userId"] = r.UserId.ToString();
+                ctx.Items["luxora.username"] = r.Username;
+                ctx.Items["luxora.isUnder13"] = r.IsUnder13;
+                ctx.Items["luxora.theme"] = r.Theme;
+                ctx.Items["luxora.created"] = r.Created;
+                ctx.Items["luxora.sessionId"] = id.ToString("N");
+            }
+        }
+        await _next(ctx);
+    }
+}
+
+public sealed class PageRenderMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly IWebHostEnvironment _env;
+    private readonly Dictionary<string, string> _cache = new();
+    public PageRenderMiddleware(RequestDelegate next, IWebHostEnvironment env) { _next = next; _env = env; }
+
+    // vanity routes -> processed page templates produced by tools/pageprep.py
+    private static readonly Dictionary<string, string> Routes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["/"] = "landing",                 // logged-out landing = 2020 signup experience
+        ["/signup"] = "landing",
+        ["/login"] = "login",
+        ["/home"] = "home",
+    };
+
+    public async Task Invoke(HttpContext ctx, LuxoraConfig cfg, XsrfTokenService xsrf)
+    {
+        if ((ctx.Request.Method == "GET") && Routes.TryGetValue(ctx.Request.Path.Value?.TrimEnd('/').Length == 0 ? "/" : ctx.Request.Path.Value ?? "", out var page))
+        {
+            // era: signed-in users never see landing/login; home is private.
+            if (ctx.Items["luxora.userId"] is not null && (page == "landing" || page == "login"))
+            { ctx.Response.Redirect("/home"); return; }
+            if (page == "home" && ctx.Items["luxora.userId"] is null)
+            { ctx.Response.Redirect("/login?returnUrl=%2Fhome"); return; }
+            var file = Path.Combine(_env.ContentRootPath, "wwwroot", "pages", page + ".htmltpl");
+            if (File.Exists(file))
+            {
+                if (!_cache.TryGetValue(file, out var tpl))
+                {
+                    tpl = await File.ReadAllTextAsync(file);
+                    _cache[file] = tpl;
+                }
+                var subject = XsrfMiddleware.Subject(ctx);
+                var html = tpl
+                    .Replace("{{LUXORA_XSRF}}", xsrf.Issue(subject))
+                    .Replace("{{LUXORA_BASEURL}}", cfg.BaseUrl)
+                    .Replace("{{LUXORA_TURNSTILE_SITEKEY}}", cfg.Captcha.Enabled ? cfg.Captcha.SiteKey : "")
+                    .Replace("{{LUXORA_USERID}}", ctx.Items["luxora.userId"] as string ?? "0")
+                    .Replace("{{LUXORA_USERNAME}}", ctx.Items["luxora.username"] as string ?? "Guest")
+                    .Replace("{{LUXORA_ISUNDER13}}", ctx.Items["luxora.isUnder13"] is bool under13 && under13 ? "true" : "false")
+                    .Replace("{{LUXORA_CREATED}}", ctx.Items["luxora.created"] is DateTimeOffset created ? created.ToString("O") : "")
+                    .Replace("{{LUXORA_THEME}}", ctx.Items["luxora.theme"] is short theme && theme == 1 ? "dark-theme" : "light-theme");
+                ctx.Response.ContentType = "text/html; charset=utf-8";
+                ctx.Response.Headers.CacheControl = "no-cache"; // never serve a stale page shell
+                await ctx.Response.WriteAsync(html);
+                return;
+            }
+        }
+        await _next(ctx);
+    }
+}
