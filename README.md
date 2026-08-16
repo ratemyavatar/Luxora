@@ -38,21 +38,21 @@ psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 001_schema.sql
                (same)            -f 010_seed.sql
 ```
 
-### 3. Configure the site (localhost values)
+### 3. Configure the site (one copy command — profiles are pre-made)
 ```bat
 cd site
-copy appsettings.Example.json appsettings.json
-notepad appsettings.json
+copy appsettings.Localhost.json appsettings.json
 ```
-Change **four** things for localhost (file is gitignored, never commits):
+That's it — the Localhost profile already matches this guide (db password `test123`, port `5299`, Turnstile always-pass test keys).
 
-```jsonc
-"Postgres":  "Host=127.0.0.1;Port=5432;Database=luxora;Username=luxora;Password=test123;Maximum Pool Size=20",
-"BaseUrl":   "http://localhost:5299",
-"CookieDomain": "",                 // EMPTY for localhost — or cookies get rejected
-"Security":  { "CookieSecure": false }   // false since localhost is http
-```
-Captcha: leave the default Turnstile **test keys** — they always pass on localhost.
+**Profiles (both committed, swappable anytime):**
+| File | Use it when |
+|---|---|
+| `appsettings.Localhost.json` | **local testing** (this guide) |
+| `appsettings.Production-luxora.wtf.json` | **deploying on the VPS domain** — fill `****` placeholders first |
+| `appsettings.Example.json` | default fallback, loaded automatically if no appsettings.json exists |
+
+The active one is always `appsettings.json` (gitignored — never commits). Switch profile = copy another one over it. Want the production luxora.wtf config back? Just say "revert to production config" and it's `copy appsettings.Production-luxora.wtf.json appsettings.json`.
 
 ### 4. Run it
 ```bat
@@ -60,7 +60,7 @@ cd site
 dotnet restore
 dotnet run
 ```
-Console prints `Now listening on: http://0.0.0.0:80` (or whatever `Urls` says — set `"Urls": "http://0.0.0.0:5299"` in your local appsettings.json for the classic dev port).
+Console prints `Now listening on: http://0.0.0.0:5299`.
 
 ### 5. Test the signup page
 1. Open **http://localhost:5299/** → the 2020 logged-out landing/signup page (real era markup + bundles).

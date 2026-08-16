@@ -4,7 +4,8 @@ using Luxora.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// config: appsettings.json (local, gitignored) -> env vars -> example defaults
+// config: appsettings.Example.json (defaults) -> appsettings.json (your local, gitignored, WINS)
+builder.Configuration.AddJsonFile("appsettings.Example.json", optional: true);
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 var cfg = builder.Configuration.GetSection("Luxora").Get<LuxoraConfig>()
           ?? throw new InvalidOperationException("Luxora config section missing — copy site/appsettings.Example.json to site/appsettings.json");
