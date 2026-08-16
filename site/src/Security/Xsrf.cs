@@ -50,7 +50,9 @@ public sealed class XsrfMiddleware
         // era telemetry beacons POST without tokens and would just spam 403s — exempt
         var isTelemetry = path.StartsWith("/apisite/metrics/", StringComparison.OrdinalIgnoreCase)
                        || path.StartsWith("/apisite/abtesting/", StringComparison.OrdinalIgnoreCase);
-        if (isApi && !isTelemetry && Mutating.Contains(ctx.Request.Method))
+        var isReadOnlyBatch = path.Equals("/apisite/thumbnails/v1/batch", StringComparison.OrdinalIgnoreCase)
+                           || path.Equals("/apisite/presence/v1/presence/users", StringComparison.OrdinalIgnoreCase);
+        if (isApi && !isTelemetry && !isReadOnlyBatch && Mutating.Contains(ctx.Request.Method))
         {
             var subject = Subject(ctx);
             // LoginNegotiate for client joins is authenticated differently; phase-1 exempt none.

@@ -28,6 +28,7 @@ psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 010_seed.sql
 psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 002_games.sql
 psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 003_social.sql
 psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 004_remove_placeholder_games.sql
+psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 005_thumbnails.sql
 ```
 
 (pgAdmin alternative: right-click the `luxora` database → Query Tool → open each .sql → Execute.)

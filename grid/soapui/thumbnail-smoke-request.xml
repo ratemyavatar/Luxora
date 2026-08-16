@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://roblox.com/">
+  <SOAP-ENV:Body>
+    <ns1:OpenJob>
+      <ns1:job>
+        <ns1:id>luxora-soapui-thumbnail-smoke</ns1:id>
+        <ns1:expirationInSeconds>30</ns1:expirationInSeconds>
+        <ns1:category>1</ns1:category>
+        <ns1:cores>1</ns1:cores>
+      </ns1:job>
+      <ns1:script>
+        <ns1:name>LuxoraThumbnailSmoke</ns1:name>
+        <ns1:script>local p=game:GetService('Players'):CreateLocalPlayer(1) p:LoadCharacter() return game:GetService('ThumbnailGenerator'):Click('PNG',150,150,true)</ns1:script>
+      </ns1:script>
+    </ns1:OpenJob>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

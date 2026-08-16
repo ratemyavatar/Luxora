@@ -15,6 +15,7 @@ builder.Services.AddSingleton<Db>();
 builder.Services.AddSingleton<RobloxCookieAuth>();
 builder.Services.AddSingleton<XsrfTokenService>();
 builder.Services.AddSingleton<TurnstileService>();
+builder.Services.AddSingleton<ThumbnailService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddHttpClient();
 

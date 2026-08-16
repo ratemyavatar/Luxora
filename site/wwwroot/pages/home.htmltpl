@@ -6,7 +6,7 @@
 <html>
 <!--<![endif]-->
 <head data-machine-id="WEB519">
-<script src="/luxora/hostshim.js?v=home4"></script>
+<script src="/luxora/hostshim.js?v=home5"></script>
     <!-- MachineID: WEB519 -->
     <title>Home - Roblox</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,requiresActiveX=true" />
@@ -1371,7 +1371,7 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js?v=home4" defer></script>
-<script src="/luxora/home.js?v=home4" defer></script>
+<script src="/luxora/auth.js?v=home5" defer></script>
+<script src="/luxora/home.js?v=home5" defer></script>
 </body>
 </html>

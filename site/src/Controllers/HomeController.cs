@@ -167,7 +167,7 @@ public sealed class GamesController : ControllerBase
             universeId = g.Id, placeId = g.PlaceId, name = g.Name,
             creatorId = g.CreatorId, creatorName = g.CreatorName,
             playerCount = g.Playing, totalVisits = g.Visits, favoritedCount = g.Favorites,
-            imageUrl = string.IsNullOrWhiteSpace(g.IconPath) ? "/bundles/img/__thumb.png" : g.IconPath
+            imageUrl = string.IsNullOrWhiteSpace(g.IconPath) ? $"/thumbs/game-icon/{g.Id}/150x150.png" : g.IconPath
         };
         var cont = all.Where(x => x.LastPlayed is not null).OrderByDescending(x => x.LastPlayed).Take(6).Select(Card);
         var recommended = all.OrderBy(x => (x.Id * 1103515245L + me.Value) & 0x7fffffff).Take(6).Select(Card);
@@ -204,26 +204,8 @@ public sealed class HomeMetaController : ControllerBase
             select u.id as Id, u.username::text as Name, coalesce(e.robux,0) as Robux
             from users u left join user_economy e on e.user_id=u.id where u.id=@me", new { me });
         return Ok(new { id = row.Id, name = row.Name, displayName = row.Name, robux = row.Robux,
-            UserID = row.Id, UserName = row.Name, RobuxBalance = row.Robux, ThumbnailUrl = "/bundles/img/__thumb.png" });
+            UserID = row.Id, UserName = row.Name, RobuxBalance = row.Robux,
+            ThumbnailUrl = $"/thumbs/avatar-headshot/{row.Id}/150x150.png" });
     }
 
-    public sealed class ThumbnailRequest
-    {
-        public long RequestId { get; set; }
-        public long TargetId { get; set; }
-        public string? Type { get; set; }
-        public string? Size { get; set; }
-    }
-
-    [HttpPost("/apisite/thumbnails/v1/batch")]
-    public IActionResult Thumbnails([FromBody] ThumbnailRequest[]? req)
-    {
-        if (CurrentUser.Id(HttpContext) is null) return Unauthorized();
-        var data = (req ?? Array.Empty<ThumbnailRequest>()).Take(100).Select(x => new
-        {
-            requestId = x.RequestId.ToString(), targetId = x.TargetId, state = "Completed",
-            imageUrl = "/bundles/img/__thumb.png", version = "TN1"
-        });
-        return Ok(new { data });
-    }
 }

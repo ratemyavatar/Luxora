@@ -29,7 +29,7 @@
     host.innerHTML = '<div class="home-header"><a class="user-avatar-container avatar avatar-headshot-lg"><span class="avatar-card-image"><img alt=""></span></a><div class="user-info-container"><h1 class="user-name-container"><a></a></h1></div></div>';
     var links = host.querySelectorAll("a");
     for (var i = 0; i < links.length; i++) links[i].href = "/users/" + me.id + "/profile";
-    q("img", host).src = "/bundles/img/__thumb.png";
+    q("img", host).src = "/thumbs/avatar-headshot/" + me.id + "/150x150.png";
     q("img", host).alt = me.name;
     text(q(".user-name-container a", host), me.displayName || me.name);
   }
@@ -46,7 +46,7 @@
       var item = el('<li class="list-item friend"><div><div class="avatar-container"><a class="text-link friend-link"><div class="avatar avatar-card-fullbody"><span class="avatar-card-link friend-avatar"><span class="avatar-card-image"><img alt=""></span></span></div><span class="text-overflow friend-name font-caption-header"></span></a><span class="avatar-status friend-status"></span></div></div></li>');
       item.id = "people-" + friend.id;
       var link = q(".friend-link", item); link.href = "/users/" + friend.id + "/profile";
-      q("img", item).src = "/bundles/img/__thumb.png"; q("img", item).alt = friend.name;
+      q("img", item).src = "/thumbs/avatar-headshot/" + friend.id + "/150x150.png"; q("img", item).alt = friend.name;
       text(q(".friend-name", item), friend.displayName || friend.name);
       q(".friend-name", item).title = friend.displayName || friend.name;
       var status = q(".friend-status", item);
@@ -64,7 +64,7 @@
     var link = q("a", card);
     link.id = String(game.universeId);
     link.href = "/games/" + game.placeId + "/" + encodeURIComponent(game.name.replace(/\s+/g, "-"));
-    var img = q("img", card); img.src = game.imageUrl || "/bundles/img/__thumb.png"; img.alt = game.name;
+    var img = q("img", card); img.src = game.imageUrl || ("/thumbs/game-icon/" + game.universeId + "/150x150.png"); img.alt = game.name;
     var name = q(".game-card-name", card); name.title = game.name; text(name, game.name);
     text(q(".playing-counts-label", card), Number(game.playerCount || 0).toLocaleString());
     return card;

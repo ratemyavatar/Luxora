@@ -8,6 +8,7 @@ public sealed class LuxoraConfig
     public SecurityCfg Security { get; set; } = new();
     public CaptchaCfg Captcha { get; set; } = new();
     public NewUserCfg NewUser { get; set; } = new();
+    public GridCfg Grid { get; set; } = new();
 
     public sealed class SecurityCfg
     {
@@ -25,5 +26,12 @@ public sealed class LuxoraConfig
     {
         public long StarterRobux { get; set; } = 50;
         public string HomeRedirectAfterSignup { get; set; } = "/home";
+    }
+    public sealed class GridCfg
+    {
+        public bool Enabled { get; set; } = true;
+        public string SoapUrl { get; set; } = "http://127.0.0.1:64989";
+        public int ThumbnailTimeoutSeconds { get; set; } = 30;
+        public int ThumbnailMaxSize { get; set; } = 720;
     }
 }

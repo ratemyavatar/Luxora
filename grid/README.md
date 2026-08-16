@@ -9,7 +9,7 @@ sourced from `github.com/rytiufi1/kornet` (their production setup) — see `ATTR
 | `RCCService2020/RCCService.exe` | The grid node itself — build **0.450.0.411923** (2020-09-30, mid-2020L), pre-patched by the kornet team for revival use (http base-url, trust-check bypass). sha256 in `SHA256SUMS.txt`. |
 | `RCCService2020/OPENGL32.DLL` | shim needed for headless/offscreen GL on Windows server boxes |
 | `RCCService2020/msvcp110.dll`, `msvcr110.dll`, `VMProtectSDK32.dll` | runtime deps |
-| `RCCService2020/AppSettings.xml` | `<ContentFolder>content</ContentFolder>` + `<BaseUrl>` — **swap `http://kornet.lat` for the Luxora host on deploy** (one-line edit) |
+| `RCCService2020/AppSettings.xml` | `<ContentFolder>content</ContentFolder>` + `<BaseUrl>http://127.0.0.1:5299</BaseUrl>` for the one-VPS localhost setup (change only when RCC and site are on different hosts) |
 | `RCCService2020/DevSettingsFile.json` | complete 2020 FFlag set for grid mode (240KB, feeds `-settingsfile`) |
 | `RCCService2020/ssl/cacert.pem` | CA bundle for the RCC's internal https client |
 | `RCCService2020/internalscripts/` | **real 2020 internal scripts** — `thumbnails/` (Avatar, Avatar_R15_*, Hat, Model, Place, Shirt, Pants, Mesh, Gear, Head, Closeup, Package, Image, Video, Animation…), `scripts/ValidateUgcContent.lua`, `modules/assetValidation/Hat.lua` — our render + validation script basis |
@@ -30,7 +30,9 @@ cd grid/RCCService2020
 RCCService.exe -console -verbose -port 64989 -settingsfile DevSettingsFile.json
 ```
 Then the Luxora site drives it over **SOAP** at `http://127.0.0.1:64989`:
-- `OpenJobEx` (ns `http://roblox.com/`) with job `{id: guid, category: 1, cores: 1, expirationInSeconds: 43600}` and CDATA script = `internalscripts/GameServer.lua` with `%name%`-placeholders filled in
+- Thumbnail requests use `OpenJob` (ns `http://roblox.com/`) and save returned PNGs under `site/wwwroot/thumbnails`. Headshots, full avatars, game icons, game thumbnails, the navbar, and the home cards all point to this cache.
+- `grid/soapui/thumbnail-smoke-request.xml` is a ready-to-paste SoapUI request. Create a POST request to `http://127.0.0.1:64989`, content type `text/xml`, paste it, and the first returned Lua value is a base64 PNG.
+- Game servers use `OpenJobEx` with job `{id: guid, category: 1, cores: 1, expirationInSeconds: 43600}` and CDATA script = `internalscripts/GameServer.lua` with `%name%`-placeholders filled in
 - GameServer.lua registers the server back at the site (`/gs/ping`, `/gs/activity`, `/gs/shutdown`, `/gs/players/report` + shared `GameServerAuthorization` header; badge award via `game/badge/award.ashx`).
 - 2021-era RCC builds want the SOAP12 `RCCServiceSoap`/`RCCServiceSoap12` namespaces instead (client handled in site code — see study notes `study/backend_api/kornet_architecture.md`).
 
