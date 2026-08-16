@@ -19,13 +19,14 @@ public sealed class ThumbnailService
     private readonly Db _db;
     private readonly LuxoraConfig _cfg;
     private readonly IHttpClientFactory _http;
+    private readonly ILogger<ThumbnailService> _log;
     private readonly string _root;
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
     private readonly ConcurrentDictionary<string, byte> _queued = new();
 
-    public ThumbnailService(Db db, LuxoraConfig cfg, IHttpClientFactory http, IWebHostEnvironment env)
+    public ThumbnailService(Db db, LuxoraConfig cfg, IHttpClientFactory http, IWebHostEnvironment env, ILogger<ThumbnailService> log)
     {
-        _db = db; _cfg = cfg; _http = http;
+        _db = db; _cfg = cfg; _http = http; _log = log;
         _root = Path.Combine(env.WebRootPath, "thumbnails");
     }
 
@@ -90,11 +91,13 @@ public sealed class ThumbnailService
             await File.WriteAllBytesAsync(temp, bytes);
             File.Move(temp, disk, true);
             await SaveState(kind, targetId, width, height, 1, url, null);
+            _log.LogInformation("RCC thumbnail ready: {kind} {target} {width}x{height}", kind, targetId, width, height);
             return new(ThumbnailState.Completed, url);
         }
         catch (Exception ex)
         {
             var msg = ex.Message.Length > 500 ? ex.Message[..500] : ex.Message;
+            _log.LogWarning(ex, "RCC thumbnail failed: {kind} {target} {width}x{height}", kind, targetId, width, height);
             try { await SaveState(kind, targetId, width, height, 2, null, msg); } catch { }
             return new(ThumbnailState.Error, null, msg);
         }
