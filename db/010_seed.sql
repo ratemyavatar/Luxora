@@ -3,6 +3,7 @@
 -- ============================================================================
 -- User 1 = the Luxora system/admin account (change the password after first login!).
 insert into users (id, username, password_hash, description, gender, created)
+overriding system value
 select 1, 'Luxora', 'v1$210000$REPLACE_ME_SALT$REPLACE_ME_HASH', 'The official Luxora account.', 0, '2020-09-01'
 where not exists (select 1 from users where id = 1);
 
