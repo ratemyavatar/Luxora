@@ -45,13 +45,13 @@ public sealed class UserService
         if (code != UsernameCheck.Available) return (SignupError.UsernameInvalid, umsg, null);
 
         if (string.IsNullOrEmpty(password) || password.Length < 8 || password.Length > 200)
-            return (SignupError.PasswordInvalid, "Passwords must be at least 8 characters long.");
+            return (SignupError.PasswordInvalid, "Passwords must be at least 8 characters long.", null);
         if (password.Equals(username, StringComparison.OrdinalIgnoreCase))
-            return (SignupError.PasswordInvalid, "Password may not be your username.");
+            return (SignupError.PasswordInvalid, "Password may not be your username.", null);
 
         if (!birthday.HasValue || birthday.Value.Year < 1900 || birthday.Value > DateOnly.FromDateTime(DateTime.UtcNow))
-            return (SignupError.BirthdayInvalid, "Please enter a valid birthday.");
-        if (gender is not (0 or 2 or 3)) return (SignupError.GenderInvalid, "Please pick a gender.");
+            return (SignupError.BirthdayInvalid, "Please enter a valid birthday.", null);
+        if (gender is not (0 or 2 or 3)) return (SignupError.GenderInvalid, "Please pick a gender.", null);
 
         var isU13 = Age(birthday.Value) < 13;
         var hash = HashPassword(password);
@@ -88,7 +88,7 @@ public sealed class UserService
     private static string HashPassword(string pw)
     {
         var salt = RandomNumberGenerator.GetBytes(16);
-        var hash = Rfc2898DeriveBytes.Pbkdf2(pw, salt, 210_000, HashFunctionName.SHA512, 32);
+        var hash = Rfc2898DeriveBytes.Pbkdf2(pw, salt, 210_000, HashAlgorithmName.SHA512, 32);
         return $"v1$210000${Convert.ToBase64String(salt)}${Convert.ToBase64String(hash)}";
     }
 
@@ -98,7 +98,7 @@ public sealed class UserService
         if (parts.Length != 4 || parts[0] != "v1") return false;
         var salt = Convert.FromBase64String(parts[2]);
         var expect = Convert.FromBase64String(parts[3]);
-        var got = Rfc2898DeriveBytes.Pbkdf2(pw, salt, int.Parse(parts[1]), HashFunctionName.SHA512, expect.Length);
+        var got = Rfc2898DeriveBytes.Pbkdf2(pw, salt, int.Parse(parts[1]), HashAlgorithmName.SHA512, expect.Length);
         return CryptographicOperations.FixedTimeEquals(got, expect);
     }
 
