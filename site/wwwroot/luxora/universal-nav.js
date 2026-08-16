@@ -24,8 +24,12 @@
     var popover = nav.querySelector("#settings-popover");
     if (settingsButton && popover) {
       event.preventDefault();
-      popover.classList.toggle("hidden");
-      popover.classList.toggle("in", !popover.classList.contains("hidden"));
+      var opening = popover.classList.contains("hidden");
+      popover.classList.toggle("hidden", !opening);
+      popover.classList.toggle("in", opening);
+      // The captured React Popover supplied display:block inline; its base 2022
+      // stylesheet intentionally keeps every .popover at display:none otherwise.
+      popover.style.display = opening ? "block" : "";
       return;
     }
 
@@ -48,6 +52,7 @@
     if (popover && !popover.classList.contains("hidden") && !event.target.closest("#navbar-settings")) {
       popover.classList.add("hidden");
       popover.classList.remove("in");
+      popover.style.display = "";
     }
   }, true);
 
