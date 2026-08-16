@@ -296,6 +296,16 @@ def prep(src: Path, name: str) -> Path:
     t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-fA-Z\-]+)\.(png|jpg|jpeg|gif|ico|svg|webp)', img_sub, t)
     t = re.sub(r'https://images\.rbxcdn\.com/([0-9a-f]{16,64})(?=[\s"\'\)])', img_sub, t)
 
+    # Captured 2022 Create templates use extensionless tr.rbxcdn image URLs.
+    def template_img(mm: re.Match) -> str:
+        digest = mm.group(1)
+        remote = mm.group(0)
+        local = f"bundles/img/templates/{digest}.jpg"
+        if not (SITE_WWW / local).exists():
+            _MANIFEST.add(f"images|{remote}|https://web.archive.org/web/2022im_/{remote}|{local}")
+        return "/" + local
+    t = re.sub(r'https://tr\.rbxcdn\.com/([0-9a-f]{32})/197/115/Image/Jpeg', template_img, t, flags=re.I)
+
     # 6) absolute site links -> relative (page links only; API URLs are shimmed at runtime)
     t = re.sub(r'https?://(?:www|web)\.roblox\.com(?=[/"\'\s])', '', t)
 

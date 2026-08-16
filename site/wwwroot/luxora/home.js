@@ -26,7 +26,7 @@
   function renderHeader(me) {
     var host = q("#home-header");
     if (!host) return;
-    host.innerHTML = '<div class="home-header"><a class="user-avatar-container avatar avatar-headshot-lg"><span class="avatar-card-image"><img alt=""></span></a><div class="user-info-container"><h1 class="user-name-container"><a></a></h1></div></div>';
+    host.innerHTML = '<div class="home-header"><a class="user-avatar-container avatar avatar-headshot-lg"><span class="thumbnail-2d-container avatar-card-image"><img alt=""></span></a><div class="user-info-container"><h1 class="user-name-container"><a></a></h1></div></div>';
     var links = host.querySelectorAll("a");
     for (var i = 0; i < links.length; i++) links[i].href = "/users/" + me.id + "/profile";
     q("img", host).src = "/thumbs/avatar-headshot/" + me.id + "/150x150.png";
@@ -43,7 +43,7 @@
     text(q(".friends-count", section), "(" + friends.length + ")");
     var list = q("ul", section);
     friends.slice(0, 9).forEach(function (friend) {
-      var item = el('<li class="list-item friend"><div><div class="avatar-container"><a class="text-link friend-link"><div class="avatar avatar-card-fullbody"><span class="avatar-card-link friend-avatar"><span class="avatar-card-image"><img alt=""></span></span></div><span class="text-overflow friend-name font-caption-header"></span></a><span class="avatar-status friend-status"></span></div></div></li>');
+      var item = el('<li class="list-item friend"><div><div class="avatar-container"><a class="text-link friend-link"><div class="avatar avatar-card-fullbody"><span class="avatar-card-link friend-avatar"><span class="thumbnail-2d-container avatar-card-image"><img alt=""></span></span></div><span class="text-overflow friend-name font-caption-header"></span></a><span class="avatar-status friend-status"></span></div></div></li>');
       item.id = "people-" + friend.id;
       var link = q(".friend-link", item); link.href = "/users/" + friend.id + "/profile";
       q("img", item).src = "/thumbs/avatar-headshot/" + friend.id + "/150x150.png"; q("img", item).alt = friend.name;

@@ -65,11 +65,29 @@ public sealed class PageRenderMiddleware
         ["/develop"] = "develop",
         ["/places/create"] = "createexperience",
         ["/universes/configure"] = "createexperience",
+        ["/discover"] = "navpage",
+        ["/catalog"] = "navpage",
+        ["/robux"] = "navpage",
+        ["/users/friends"] = "navpage",
+        ["/my/messages"] = "navpage",
+        ["/my/avatar"] = "navpage",
+        ["/trades"] = "navpage",
+        ["/my/groups"] = "navpage",
+        ["/giftcards-us"] = "navpage",
+        ["/premium/membership"] = "navpage",
+        ["/my/account"] = "navpage",
+        ["/crossdevicelogin/confirmcode"] = "navpage",
+        ["/info/help"] = "navpage",
     };
 
     public async Task Invoke(HttpContext ctx, LuxoraConfig cfg, XsrfTokenService xsrf)
     {
-        if ((ctx.Request.Method == "GET") && Routes.TryGetValue(ctx.Request.Path.Value?.TrimEnd('/').Length == 0 ? "/" : ctx.Request.Path.Value ?? "", out var page))
+        var rawPath = ctx.Request.Path.Value ?? "/";
+        var path = rawPath.TrimEnd('/').Length == 0 ? "/" : rawPath.TrimEnd('/');
+        Routes.TryGetValue(path, out var page);
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/(profile|inventory)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            page = "navpage";
+        if (ctx.Request.Method == "GET" && page is not null)
         {
             // Signed-in users skip signup, but /login remains directly testable and can
             // switch accounts (the captured navigation currently has no reliable logout UI).

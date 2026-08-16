@@ -41,6 +41,13 @@
       return;
     }
 
+    var robux = event.target.closest && event.target.closest(".btn-navigation-nav-robux-md");
+    if (robux) { event.preventDefault(); location.href = "/robux"; return; }
+    var notifications = event.target.closest && event.target.closest(".btn-navigation-nav-notification-stream-md");
+    if (notifications) { event.preventDefault(); location.href = "/my/messages"; return; }
+    var shop = event.target.closest && event.target.closest("#nav-shop");
+    if (shop) { event.preventDefault(); location.href = "/catalog"; return; }
+
     var menu = event.target.closest && event.target.closest(".btn-navigation-nav-menu-md,#header-menu-icon");
     if (menu) {
       event.preventDefault();
