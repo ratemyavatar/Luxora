@@ -5,6 +5,10 @@
   function q(selector, root) { return (root || document).querySelector(selector); }
   function element(html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; }
   function text(node, value) { if (node) node.textContent = value == null ? "" : String(value); }
+  function post(url, body, token) {
+    return fetch(url, { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": token || window.LUXORA.xsrf }, body: JSON.stringify(body) })
+      .then(function (response) { var retry = response.headers.get("X-CSRF-TOKEN"); if (response.status === 403 && retry) return post(url, body, retry); if (!response.ok) throw new Error("request failed"); return response.json(); });
+  }
 
   function gameRow(game) {
     var wrap = document.createDocumentFragment();
@@ -17,9 +21,14 @@
     var image = q("img", row); image.src = game.imageUrl; image.alt = game.name;
     var title = q(".universe-name-col > .title", row); title.href = configure; text(title, game.name);
     var place = q(".start-place-url", row); place.href = gameUrl; text(place, game.name);
-    var status = q(".activate-cell a", row); status.href = configure; status.className = game.isActive ? "place-active" : "place-inactive"; text(status, game.isActive ? "Public" : "Private");
-    q(".edit-col .btn-control", row).href = "/sponsored-games/universes/" + game.id + "/create";
-    q(".roblox-edit-button", row).href = "/places/" + game.rootPlaceId + "/edit";
+    var status = q(".activate-cell a", row); status.href = "#"; status.className = game.isActive ? "place-active" : "place-inactive"; text(status, game.isActive ? "Public" : "Private");
+    status.addEventListener("click", function (event) {
+      event.preventDefault();
+      post("/apisite/develop/v1/games/" + game.id + "/active", { isActive: !game.isActive }).then(load);
+    });
+    q(".edit-col .btn-control", row).href = "/develop?Page=ads&gameId=" + game.id;
+    q(".roblox-edit-button", row).href = "/universes/configure?id=" + game.id;
+    q(".gear-button", row).href = "/universes/configure?id=" + game.id;
     wrap.appendChild(row);
     wrap.appendChild(element('<div class="separator"></div>'));
     return wrap;

@@ -63,6 +63,8 @@ public sealed class PageRenderMiddleware
         ["/login/default.aspx"] = "login",
         ["/home"] = "home",
         ["/develop"] = "develop",
+        ["/places/create"] = "createexperience",
+        ["/universes/configure"] = "createexperience",
     };
 
     public async Task Invoke(HttpContext ctx, LuxoraConfig cfg, XsrfTokenService xsrf)

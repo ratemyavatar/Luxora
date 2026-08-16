@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "develop1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "develop2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -214,6 +214,11 @@ def prep(src: Path, name: str) -> Path:
         t = re.sub(r'data-userid\s*=\s*(?:"\d+"|\'\d+\'|\d+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
         t = re.sub(r'(<body[^>]*class=["\'][^"\']*)dark-theme', r'\1{{LUXORA_THEME}}', t, count=1, flags=re.I)
 
+    if name == "createexperience":
+        t = re.sub(r'data-userid\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
+        t = re.sub(r'(<span\b[^>]*\bid=["\']userData["\'][^>]*\bdata-name=)(?:"[^"]*"|\'[^\']*\'|[^\s>]+)',
+                   r'\1"{{LUXORA_USERNAME}}"', t, flags=re.I)
+
     if name == "develop":
         # Remove archived owners/groups and captured games before the response exists.
         t = replace_div_by_id(t, "GroupCreationsTab", '<div id="GroupCreationsTab"></div>')
@@ -251,7 +256,7 @@ def prep(src: Path, name: str) -> Path:
             if component in {"navigation", "peoplelist", "placeslist", "homeheader", "homepageupsellcard",
                              "avatarshophomepagerecommendations", "accountsecurityprompt", "gamelaunch"}:
                 local = None
-        elif name == "develop":
+        elif name in {"develop", "createexperience"}:
             digest = re.search(r'https://js\.rbxcdn\.com/([0-9a-f]+)\.js', tag, re.I)
             exact = f"develop2022-{digest.group(1)}.js" if digest else ""
             # Develop's listing is bound by our vanilla glue. Keep only the captured
@@ -265,14 +270,14 @@ def prep(src: Path, name: str) -> Path:
     def css_repl(mm: re.Match) -> str:
         tag = mm.group(0)
         component = bundle_name(tag)
-        css_map = HOME_CSS_NAME_MAP if name == "home" else DEVELOP_CSS_NAME_MAP if name == "develop" else CSS_NAME_MAP
+        css_map = HOME_CSS_NAME_MAP if name == "home" else DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience"} else CSS_NAME_MAP
         local = css_map.get(component) if component else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
         return re.sub(r'href\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'href="{new}"', tag, count=1)
     t = re.sub(r"<link[^>]*href\s*=\s*(?:[\"']https://css\.rbxcdn\.com/[^\"']+[\"']|https://css\.rbxcdn\.com/[^\s>]+)[^>]*>", css_repl, t, flags=re.I)
     LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
-    elif name == "develop": LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
+    elif name in {"develop", "createexperience"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
     t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
@@ -321,7 +326,7 @@ def prep(src: Path, name: str) -> Path:
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
     t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
-    glue_files = {"home": "home.js", "develop": "develop.js"}
+    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'
