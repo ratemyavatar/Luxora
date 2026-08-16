@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Xml.Linq;
 using Dapper;
 
@@ -106,30 +107,16 @@ public sealed class ThumbnailService
 
     private async Task<string?> BuildScript(ThumbnailKind kind, long targetId, int width, int height)
     {
+        // This RCC train does not execute raw Lua from OpenJob. Its script field is
+        // a JSON dispatcher envelope; Mode=Thumbnail loads internalscripts/thumbnails/{Type}.lua.
         if (kind is ThumbnailKind.Avatar or ThumbnailKind.AvatarHeadshot)
         {
-            var camera = kind == ThumbnailKind.AvatarHeadshot ? @"
-local character = player.Character
-if character and character:FindFirstChild('Head') then
-    local head = character.Head
-    local camera = Instance.new('Camera', character)
-    camera.Name = 'ThumbnailCamera'
-    camera.CameraType = Enum.CameraType.Scriptable
-    local look = head.CFrame * CFrame.new(0, 0.15, 0)
-    local pos = head.CFrame + (CFrame.Angles(0, -math.pi / 16, 0).lookVector.unit * 3)
-    camera.CoordinateFrame = CFrame.new(pos.p, look.p)
-    camera.FieldOfView = 30
-    workspace.CurrentCamera = camera
-end" : "";
-            return $@"
-local ThumbnailGenerator = game:GetService('ThumbnailGenerator')
-pcall(function() game:GetService('ContentProvider'):SetBaseUrl({LuaString(_cfg.BaseUrl)}) end)
-game:GetService('ScriptContext').ScriptsDisabled = true
-game:GetService('UserInputService').MouseIconEnabled = false
-local player = game:GetService('Players'):CreateLocalPlayer({targetId})
-player:LoadCharacter()
-{camera}
-return ThumbnailGenerator:Click('PNG', {width}, {height}, true)";
+            var type = kind == ThumbnailKind.AvatarHeadshot ? "LuxoraHeadshot" : "LuxoraAvatar";
+            return JsonSerializer.Serialize(new
+            {
+                Mode = "Thumbnail",
+                Settings = new { Type = type, Arguments = new object[] { targetId, _cfg.BaseUrl, "PNG", width, height } }
+            });
         }
 
         using var c = _db.Open();
@@ -138,14 +125,15 @@ return ThumbnailGenerator:Click('PNG', {width}, {height}, true)";
             where g.id=@targetId and p.is_root_place limit 1", new { targetId });
         if (string.IsNullOrWhiteSpace(source)) return null;
         var asset = source.Contains("://", StringComparison.Ordinal) ? source : "rbxasset://" + source.Replace('\\', '/');
-        return $@"
-local ThumbnailGenerator = game:GetService('ThumbnailGenerator')
-pcall(function() game:GetService('ContentProvider'):SetBaseUrl({LuaString(_cfg.BaseUrl)}) end)
-game:GetService('ScriptContext').ScriptsDisabled = true
-game:GetService('StarterGui').ShowDevelopmentGui = false
-game:GetService('UserInputService').MouseIconEnabled = false
-game:Load({LuaString(asset)})
-return ThumbnailGenerator:Click('PNG', {width}, {height}, false)";
+        return JsonSerializer.Serialize(new
+        {
+            Mode = "Thumbnail",
+            Settings = new
+            {
+                Type = "Place",
+                Arguments = new object[] { asset, "PNG", width, height, _cfg.BaseUrl, targetId }
+            }
+        });
     }
 
     private async Task<byte[]> ExecuteOpenJob(string script)
@@ -206,5 +194,4 @@ return ThumbnailGenerator:Click('PNG', {width}, {height}, false)";
         _ => "game-thumbnail",
     };
     private static string Key(ThumbnailKind kind, long id, int w, int h) => $"{kind}:{id}:{w}:{h}";
-    private static string LuaString(string value) => "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\r", "\\r").Replace("\n", "\\n") + "\"";
 }

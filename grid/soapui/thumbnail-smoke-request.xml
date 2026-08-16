@@ -10,7 +10,7 @@
       </ns1:job>
       <ns1:script>
         <ns1:name>LuxoraThumbnailSmoke</ns1:name>
-        <ns1:script>local p=game:GetService('Players'):CreateLocalPlayer(1) p:LoadCharacter() return game:GetService('ThumbnailGenerator'):Click('PNG',150,150,true)</ns1:script>
+        <ns1:script>{"Mode":"Thumbnail","Settings":{"Type":"LuxoraHeadshot","Arguments":[1,"http://localhost:5299","PNG",150,150]}}</ns1:script>
       </ns1:script>
     </ns1:OpenJob>
   </SOAP-ENV:Body>
