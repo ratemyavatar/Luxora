@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "home5"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "develop1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -30,6 +30,11 @@ HOME_CSS_NAME_MAP = {
     "footer": "home2022-footer.css", "thumbnails": "home2022-thumbnails.css",
     "robuxicon": "home2022-robux.css", "peoplelist": "home2022-people-list.css",
     "placeslist": "home2022-places-list.css", "homeheader": "home2022-header.css",
+}
+DEVELOP_CSS_NAME_MAP = {
+    "legacystyleguide": "home2022-styleguide.css", "thumbnails": "home2022-thumbnails.css",
+    "audiobutton": "develop2022-audio.css", "developerexchange": "develop2022-devex.css",
+    "robuxicon": "home2022-robux.css",
 }
 EMPTY_CSS = "/bundles/css/__empty.css"
 
@@ -96,7 +101,20 @@ def _img_rep(mm: re.Match, kind: str) -> str:
 
 def replace_div_by_id(text: str, element_id: str, replacement: str) -> str:
     """Replace one captured div and all nested divs without rewriting its markup."""
-    start_match = re.search(r'<div\b[^>]*\bid=["\']' + re.escape(element_id) + r'["\'][^>]*>', text, re.I)
+    value = re.escape(element_id)
+    start_match = re.search(r'<div\b[^>]*\bid\s*=\s*(?:["\']' + value + r'["\']|' + value + r'(?=[\s>]))[^>]*>', text, re.I)
+    if not start_match: return text
+    depth = 0
+    for tag in re.finditer(r'<div\b[^>]*>|</div\s*>', text[start_match.start():], re.I):
+        depth += -1 if tag.group(0).lower().startswith('</') else 1
+        if depth == 0:
+            end = start_match.start() + tag.end()
+            return text[:start_match.start()] + replacement + text[end:]
+    return text
+
+def replace_first_div_by_class(text: str, class_name: str, replacement: str) -> str:
+    value = re.escape(class_name)
+    start_match = re.search(r'<div\b[^>]*\bclass\s*=\s*(?:["\'][^"\']*\b' + value + r'\b[^"\']*["\']|[^\s>]*\b' + value + r'\b[^\s>]*)[^>]*>', text, re.I)
     if not start_match: return text
     depth = 0
     for tag in re.finditer(r'<div\b[^>]*>|</div\s*>', text[start_match.start():], re.I):
@@ -163,6 +181,10 @@ def env_urls_json() -> str:
     m["domain"] = "luxora.wtf"
     return json.dumps(m)
 
+def bundle_name(tag: str) -> str:
+    match = re.search(r'data-bundlename\s*=\s*(?:["\']([^"\']+)["\']|([^\s>]+))', tag, re.I)
+    return ((match.group(1) or match.group(2)) if match else "").lower()
+
 def prep(src: Path, name: str) -> Path:
     t = src.read_text(encoding="utf-8", errors="replace")
 
@@ -173,13 +195,34 @@ def prep(src: Path, name: str) -> Path:
 
     # Captured authenticated pages must never leak the archived account. Keep the
     # capture's attributes/markup, but make their values per-request template tokens.
-    if name == "home":
+    if name not in {"landing", "login"}:
+        def user_meta(mm: re.Match) -> str:
+            tag = mm.group(0)
+            values = {"userid": "{{LUXORA_USERID}}", "name": "{{LUXORA_USERNAME}}",
+                      "displayname": "{{LUXORA_USERNAME}}", "isunder13": "{{LUXORA_ISUNDER13}}",
+                      "created": "{{LUXORA_CREATED}}"}
+            for attr, value in values.items():
+                tag = re.sub(r'(data-' + attr + r')\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)',
+                             lambda m: f'{m.group(1)}="{value}"', tag, flags=re.I)
+            return tag
+        t = re.sub(r'<meta\b(?=[^>]*\bname\s*=\s*["\']?user-data(?:["\']|\s|>))[^>]*>', user_meta, t, flags=re.I)
         t = re.sub(r'(name=["\']user-data["\'][^>]*data-userid=["\'])[^"\']*', r'\1{{LUXORA_USERID}}', t, flags=re.I)
         t = re.sub(r'(name=["\']user-data["\'][^>]*data-name=["\'])[^"\']*', r'\1{{LUXORA_USERNAME}}', t, flags=re.I)
         t = re.sub(r'(name=["\']user-data["\'][^>]*data-displayName=["\'])[^"\']*', r'\1{{LUXORA_USERNAME}}', t, flags=re.I)
         t = re.sub(r'(name=["\']user-data["\'][^>]*data-isunder13=["\'])[^"\']*', r'\1{{LUXORA_ISUNDER13}}', t, flags=re.I)
         t = re.sub(r'(name=["\']user-data["\'][^>]*data-created=["\'])[^"\']*', r'\1{{LUXORA_CREATED}}', t, flags=re.I)
+        t = re.sub(r'data-userid\s*=\s*(?:"\d+"|\'\d+\'|\d+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
         t = re.sub(r'(<body[^>]*class=["\'][^"\']*)dark-theme', r'\1{{LUXORA_THEME}}', t, count=1, flags=re.I)
+
+    if name == "develop":
+        # Remove archived owners/groups and captured games before the response exists.
+        t = replace_div_by_id(t, "GroupCreationsTab", '<div id="GroupCreationsTab"></div>')
+        t = replace_first_div_by_class(t, "items-container", '<div class="items-container"></div>')
+        # These captured initializers belong to omitted bundles and only throw; none
+        # owns visible Develop markup or behavior used by Luxora.
+        for marker in ("Roblox.FixedUI.gutterAdsEnabled", "Roblox.Client._skip",
+                       "Roblox.DeveloperConsoleWarning.showWarning"):
+            t = re.sub(r'<script\b[^>]*>[^<]*' + re.escape(marker) + r'.*?</script>', '', t, flags=re.I | re.S)
 
     # 1) XSRF meta -> per-request token
     t = re.sub(r'(<meta\s+name\s*=\s*["\']?csrf-token["\']?[^>]*data-token\s*=\s*["\'])[^"\']*', r"\1{{LUXORA_XSRF}}", t, flags=re.I)
@@ -196,8 +239,8 @@ def prep(src: Path, name: str) -> Path:
     held_js = {p.stem.lower(): p.name for p in held_js_dir.glob("*.js")}
     def js_repl(mm: re.Match) -> str:
         tag = mm.group(0)
-        bn = re.search(r"data-bundlename\s*=\s*[\"']([^\"']+)", tag, re.I)
-        local = held_js.get(bn.group(1).lower()) if bn else None
+        component = bundle_name(tag)
+        local = held_js.get(component) if component else None
         if name == "home":
             digest = re.search(r'https://js\.rbxcdn\.com/([0-9a-f]+)\.js', tag, re.I)
             exact = f"home2022-{digest.group(1)}.js" if digest else ""
@@ -205,26 +248,32 @@ def prep(src: Path, name: str) -> Path:
             else: local = None  # never mix the 2020 login JS with the 2022 home shell
             # Luxora binds these captured component structures to its own database.
             # Loading their original bootstraps too would race and erase empty rows.
-            component = bn.group(1).lower() if bn else ""
             if component in {"navigation", "peoplelist", "placeslist", "homeheader", "homepageupsellcard",
                              "avatarshophomepagerecommendations", "accountsecurityprompt", "gamelaunch"}:
                 local = None
+        elif name == "develop":
+            digest = re.search(r'https://js\.rbxcdn\.com/([0-9a-f]+)\.js', tag, re.I)
+            exact = f"develop2022-{digest.group(1)}.js" if digest else ""
+            # Develop's listing is bound by our vanilla glue. Keep only the captured
+            # bootstrap trio; partial later bundles depend on uncaptured globals.
+            local = exact if component in {"header", "polyfill", "headerscripts"} and exact and (SITE_WWW / "bundles/js" / exact).exists() else None
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
-        return re.sub(r'src\s*=\s*["\'][^"\']*["\']', f'src="{new_src}"', tag, count=1)
-    t = re.sub(r"<script[^>]*src\s*=\s*[\"']https://js\.rbxcdn\.com/[^\"']+[\"'][^>]*>", js_repl, t, flags=re.I)
+        return re.sub(r'src\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'src="{new_src}"', tag, count=1)
+    t = re.sub(r"<script[^>]*src\s*=\s*(?:[\"']https://js\.rbxcdn\.com/[^\"']+[\"']|https://js\.rbxcdn\.com/[^\s>]+)[^>]*>", js_repl, t, flags=re.I)
 
     # 4) css links: css.rbxcdn -> mapped held file; legacy static.rbxcdn page bundle -> page.css
     def css_repl(mm: re.Match) -> str:
         tag = mm.group(0)
-        bn = re.search(r"data-bundlename\s*=\s*[\"']([^\"']+)", tag, re.I)
-        css_map = HOME_CSS_NAME_MAP if name == "home" else CSS_NAME_MAP
-        local = css_map.get(bn.group(1).lower()) if bn else None
+        component = bundle_name(tag)
+        css_map = HOME_CSS_NAME_MAP if name == "home" else DEVELOP_CSS_NAME_MAP if name == "develop" else CSS_NAME_MAP
+        local = css_map.get(component) if component else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
-        return re.sub(r'href\s*=\s*["\'][^"\']*["\']', f'href="{new}"', tag, count=1)
-    t = re.sub(r"<link[^>]*href\s*=\s*[\"']https://css\.rbxcdn\.com/[^\"']+[\"'][^>]*>", css_repl, t, flags=re.I)
+        return re.sub(r'href\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'href="{new}"', tag, count=1)
+    t = re.sub(r"<link[^>]*href\s*=\s*(?:[\"']https://css\.rbxcdn\.com/[^\"']+[\"']|https://css\.rbxcdn\.com/[^\s>]+)[^>]*>", css_repl, t, flags=re.I)
     LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
-    t = re.sub(r'href=["\']https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']',
+    elif name == "develop": LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
+    t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
 
@@ -272,12 +321,14 @@ def prep(src: Path, name: str) -> Path:
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
     t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
-    page_glue = ('<script src="/luxora/home.js?v=' + GLUE_VER + '" defer></script>\n' if name == "home" else '')
+    glue_files = {"home": "home.js", "develop": "develop.js"}
+    page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'
             '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>\n'
             '<script src="/luxora/auth.js?v=' + GLUE_VER + '" defer></script>\n' + page_glue + '</body>')
-    t = re.sub(r"</body>", glue, t, count=1, flags=re.I)
+    t, injected = re.subn(r"</body>", glue, t, count=1, flags=re.I)
+    if injected == 0: t += "\n" + glue + "\n</html>"
 
     out = SITE_WWW / "pages" / f"{name}.htmltpl"
     out.parent.mkdir(parents=True, exist_ok=True)

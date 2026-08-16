@@ -62,6 +62,7 @@ public sealed class PageRenderMiddleware
         ["/newlogin"] = "login",
         ["/login/default.aspx"] = "login",
         ["/home"] = "home",
+        ["/develop"] = "develop",
     };
 
     public async Task Invoke(HttpContext ctx, LuxoraConfig cfg, XsrfTokenService xsrf)
@@ -72,8 +73,8 @@ public sealed class PageRenderMiddleware
             // switch accounts (the captured navigation currently has no reliable logout UI).
             if (ctx.Items["luxora.userId"] is not null && page == "landing")
             { ctx.Response.Redirect("/home"); return; }
-            if (page == "home" && ctx.Items["luxora.userId"] is null)
-            { ctx.Response.Redirect("/login?returnUrl=%2Fhome"); return; }
+            if (page != "landing" && page != "login" && ctx.Items["luxora.userId"] is null)
+            { ctx.Response.Redirect("/login?returnUrl=" + Uri.EscapeDataString(ctx.Request.Path)); return; }
             var file = Path.Combine(_env.ContentRootPath, "wwwroot", "pages", page + ".htmltpl");
             if (File.Exists(file))
             {
