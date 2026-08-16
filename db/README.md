@@ -2,7 +2,7 @@
 
 One-time ~5 min. You do this part; the site code never hardcodes the password.
 
-## 1. Install PostgreSQL 14+ (Windows)
+## 1. Install PostgreSQL 13+ (Windows)
 1. Download the EDB installer: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads (pick 16.x or 15.x, x64).
 2. Run it. When it asks for the **superuser (postgres) password** — pick one and save it.
    Components: keep defaults (PostgreSQL Server + pgAdmin 4 optional but handy). Port **5432**.

@@ -1,9 +1,10 @@
 -- ============================================================================
 -- LUXORA db — 001: core identity/economy schema (auth phase)
--- Target: PostgreSQL 14+ on the Windows VPS. Import per db/README.md.
+-- Target: PostgreSQL 13+ on the Windows VPS. Import per db/README.md.
 -- Later phases add migrations 002_games.sql, 003_social.sql, ... (never edit 001 in place)
 -- ============================================================================
 create extension if not exists pgcrypto;   -- gen_random_uuid()
+create extension if not exists citext;     -- case-insensitive usernames
 
 create table if not exists users (
     id              bigint generated always as identity primary key,
