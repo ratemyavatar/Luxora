@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "game2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "game4"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
