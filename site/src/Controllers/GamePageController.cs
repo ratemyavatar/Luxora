@@ -6,8 +6,8 @@ namespace Luxora.Controllers;
 [ApiController]
 public sealed class GamePageController : ControllerBase
 {
-    private readonly Db _db;
-    public GamePageController(Db db) => _db = db;
+    private readonly Db _db; private readonly Luxora.Services.RccGameService _rcc; private readonly Luxora.Services.GameTicketService _tickets; private readonly LuxoraConfig _cfg;
+    public GamePageController(Db db,Luxora.Services.RccGameService rcc,Luxora.Services.GameTicketService tickets,LuxoraConfig cfg){_db=db;_rcc=rcc;_tickets=tickets;_cfg=cfg;}
 
     private sealed class DetailRow
     {
@@ -123,13 +123,10 @@ public sealed class GamePageController : ControllerBase
     [HttpPost("/apisite/games/v1/places/{placeId:long}/join")]
     public async Task<IActionResult> Join(long placeId)
     {
-        var me=CurrentUser.Id(HttpContext); if(me is null)return Unauthorized();
-        using var c=_db.Open();
-        var server=await c.QueryFirstOrDefaultAsync<ServerRow>(@"select id as Id,server_ip::text as Ip,server_port as Port
-            from game_session where place_id=@placeId and status=1 and player_count<max_players and last_heartbeat>now()-interval '90 seconds' order by player_count desc limit 1",new{placeId});
-        if(server is null)return Conflict(new{errors=new[]{new{code=1,message="No running server is available yet."}}});
-        await c.ExecuteAsync(@"insert into user_recent_game(user_id,game_id,last_played)
-            select @me,game_id,now() from place where id=@placeId on conflict(user_id,game_id) do update set last_played=now()",new{me,placeId});
-        return Ok(new{placeId,serverId=server.Id,machineAddress=server.Ip,serverPort=server.Port});
+        var me=CurrentUser.Id(HttpContext);if(me is null)return Unauthorized();
+        var server=await _rcc.GetOrStart(placeId);if(server is null)return Conflict(new{errors=new[]{new{code=1,message="Upload a place file before playing."}}});
+        using var c=_db.Open();await c.ExecuteAsync(@"insert into user_recent_game(user_id,game_id,last_played) select @me,game_id,now() from place where id=@placeId on conflict(user_id,game_id) do update set last_played=now()",new{me,placeId});
+        var ticket=_tickets.Issue(me.Value,placeId,server);var launch=$"luxora-player://join?ticket={ticket.Id}&placeId={placeId}&baseUrl={Uri.EscapeDataString(_cfg.BaseUrl)}";
+        return Ok(new{placeId,serverId=server.Id,machineAddress=server.Address,serverPort=server.Port,ticket=ticket.Id,launcherUrl=launch,joinScriptUrl=$"{_cfg.BaseUrl}/game/join-script?ticket={ticket.Id}"});
     }
 }

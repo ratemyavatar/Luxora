@@ -6,6 +6,7 @@ site/appsettings.json
 [Bb]in/
 [Oo]bj/
 out/
+client/Player2020/
 
 # rider/vs
 .vs/

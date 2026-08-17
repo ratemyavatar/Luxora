@@ -16,7 +16,12 @@ builder.Services.AddSingleton<RobloxCookieAuth>();
 builder.Services.AddSingleton<XsrfTokenService>();
 builder.Services.AddSingleton<TurnstileService>();
 builder.Services.AddSingleton<ThumbnailService>();
+builder.Services.AddSingleton<RccGameService>();
+builder.Services.AddSingleton<GameTicketService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddHostedService<RccProcessHostedService>();
+builder.Services.AddHostedService<ThumbnailWarmupHostedService>();
+builder.Services.AddHostedService<GameSessionHeartbeatHostedService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddControllers().AddJsonOptions(o =>

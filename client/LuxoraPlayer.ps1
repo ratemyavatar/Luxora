@@ -1,0 +1,4 @@
+param([Parameter(Mandatory=$true)][string]$Uri)
+$ErrorActionPreference='Stop';$u=[Uri]$Uri;$query=@{};$u.Query.TrimStart('?').Split('&')|ForEach-Object{$p=$_.Split('=',2);if($p.Length-eq2){$query[$p[0]]=[Uri]::UnescapeDataString($p[1])}}
+$ticket=$query.ticket;$base=$query.baseUrl;if(!$base){$base='http://localhost:5299'};$root=Split-Path -Parent $PSScriptRoot;$player=Join-Path $root 'client\Player2020\RobloxPlayerBeta.exe';if(!(Test-Path $player)){Write-Host 'Install the Luxora 2020 client first.' -ForegroundColor Red;exit 1}
+$join="$base/game/join-script?ticket=$ticket";$auth="$base/login/negotiate.ashx?ticket=$ticket";$args=@('-play','-a',$auth,'-t',$ticket,'-j',$join,'-b','0','--launchtime',(Get-Date -UFormat %s));Start-Process -FilePath $player -ArgumentList $args -WorkingDirectory (Split-Path $player)

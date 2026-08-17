@@ -34,5 +34,9 @@ public sealed class LuxoraConfig
         public int ThumbnailTimeoutSeconds { get; set; } = 30;
         public int ThumbnailMaxSize { get; set; } = 720;
         public string RccRoot { get; set; } = "../grid/RCCService2020";
+        public bool AutoStart { get; set; } = true;
+        public bool WarmUserThumbnails { get; set; } = true;
+        public string GameServerAddress { get; set; } = "127.0.0.1";
+        public int GamePortStart { get; set; } = 53640;
     }
 }

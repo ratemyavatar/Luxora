@@ -30,7 +30,7 @@ It fills `content`, `platformcontent`, `shaders`, `ExtraContent`, and `ExtraCont
 cd grid/RCCService2020
 RCCService.exe -console -verbose -port 64989 -settingsfile DevSettingsFile.json
 ```
-Then the Luxora site drives it over **SOAP** at `http://127.0.0.1:64989`:
+The ASP.NET site now auto-starts this renderer when port 64989 is closed, warms RCC avatar/headshot renders for every active user every ten minutes, and drives it over **SOAP** at `http://127.0.0.1:64989`:
 - Thumbnail requests use `OpenJob` (ns `http://roblox.com/`) and save returned PNGs under `site/wwwroot/thumbnails`. Headshots, full avatars, game icons, game thumbnails, the navbar, and the home cards all point to this cache.
 - Published `.rbxl`/`.rbxlx` files are saved under `RCCService2020/places`. Web uploads and the 2020 Studio aliases `/Data/Upload.ashx` and `/ide/publish/UploadExistingAsset` update `place.rcc_file`; RCC thumbnails consume that same file.
 - `grid/soapui/thumbnail-smoke-request.xml` is a ready-to-paste SoapUI request. Create a POST request to `http://127.0.0.1:64989`, content type `text/xml`, paste it, and the first returned Lua value is a base64 PNG.
