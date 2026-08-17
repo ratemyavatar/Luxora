@@ -1,5 +1,5 @@
 <!DOCTYPE html><!--[if IE 8]><html class=ie8 ng-app=robloxApp><![endif]--> <!--[if gt IE 8]><!--><html><!--<![endif]--><head data-machine-id=WEB2386>
-<script src="/luxora/hostshim.js?v=profile1"></script><title>Perfil - Roblox</title><meta http-equiv=X-UA-Compatible content="IE=edge,requiresActiveX=true"><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1"><meta name=author content="Roblox Corporation"><meta name=description content="User é uma das milhões de pessoas criando e explorando as possibilidades infinitas da Roblox. Junte-se a User na Roblox e explorem juntos!Welcome to my profile, I'm the owner of Stand Upright: Testing Community [NOT REAL]."><meta name=keywords content="free games,online games,building games,virtual worlds,free mmo,gaming cloud,physics engine"><meta name=apple-itunes-app content="app-id=431946152"><script type=application/ld+json>
+<script src="/luxora/hostshim.js?v=catalog2"></script><title>Perfil - Roblox</title><meta http-equiv=X-UA-Compatible content="IE=edge,requiresActiveX=true"><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1"><meta name=author content="Roblox Corporation"><meta name=description content="User é uma das milhões de pessoas criando e explorando as possibilidades infinitas da Roblox. Junte-se a User na Roblox e explorem juntos!Welcome to my profile, I'm the owner of Stand Upright: Testing Community [NOT REAL]."><meta name=keywords content="free games,online games,building games,virtual worlds,free mmo,gaming cloud,physics engine"><meta name=apple-itunes-app content="app-id=431946152"><script type=application/ld+json>
     {
     "@context" : "http://schema.org",
     "@type" : "Organization",
@@ -145,7 +145,7 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js?v=profile1" defer></script>
-<script src="/luxora/profile.js?v=profile2" defer></script>
+<script src="/luxora/auth.js?v=catalog2" defer></script>
+<script src="/luxora/profile.js?v=catalog2" defer></script>
 </body>
 </html>
