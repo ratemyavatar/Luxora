@@ -146,6 +146,6 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script src="/luxora/auth.js?v=profile1" defer></script>
-<script src="/luxora/profile.js?v=profile1" defer></script>
+<script src="/luxora/profile.js?v=profile2" defer></script>
 </body>
 </html>
