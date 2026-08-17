@@ -86,7 +86,9 @@ public sealed class PageRenderMiddleware
         var rawPath = ctx.Request.Path.Value ?? "/";
         var path = rawPath.TrimEnd('/').Length == 0 ? "/" : rawPath.TrimEnd('/');
         Routes.TryGetValue(path, out var page);
-        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/(profile|inventory)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/profile$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            page = "profile";
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/inventory$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "navpage";
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/games/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "game";
