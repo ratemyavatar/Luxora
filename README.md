@@ -45,6 +45,7 @@ psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 001_schema.sql
                (same)            -f 008_game_page.sql
                (same)            -f 009_public_experiences.sql
                (same)            -f 010_catalog.sql
+               (same)            -f 011_community_pages.sql
 ```
 
 ### 3. Configure the site (one copy command — profiles are pre-made)

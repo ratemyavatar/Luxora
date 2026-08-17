@@ -90,7 +90,7 @@ public sealed class PageRenderMiddleware
         Routes.TryGetValue(path, out var page);
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/profile$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "profile";
-        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/inventory$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/(inventory|friends)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "navpage";
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/games/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "game";

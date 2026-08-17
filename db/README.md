@@ -34,6 +34,7 @@ psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 007_place_uploads.sq
 psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 008_game_page.sql
 psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 009_public_experiences.sql
 psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 010_catalog.sql
+psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 011_community_pages.sql
 ```
 
 (pgAdmin alternative: right-click the `luxora` database → Query Tool → open each .sql → Execute.)
