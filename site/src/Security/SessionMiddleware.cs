@@ -87,6 +87,8 @@ public sealed class PageRenderMiddleware
         Routes.TryGetValue(path, out var page);
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/(profile|inventory)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "navpage";
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/games/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            page = "game";
         if (ctx.Request.Method == "GET" && page is not null)
         {
             // Signed-in users skip signup, but /login remains directly testable and can
