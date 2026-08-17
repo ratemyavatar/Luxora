@@ -64,7 +64,7 @@ public sealed class PageRenderMiddleware
         ["/home"] = "home",
         ["/develop"] = "develop",
         ["/places/create"] = "createexperience",
-        ["/universes/configure"] = "createexperience",
+        ["/universes/configure"] = "configureexperience",
         ["/discover"] = "navpage",
         ["/catalog"] = "navpage",
         ["/robux"] = "navpage",

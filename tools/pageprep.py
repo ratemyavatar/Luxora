@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "develop3"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "develop4"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -102,7 +102,7 @@ def _img_rep(mm: re.Match, kind: str) -> str:
 def replace_div_by_id(text: str, element_id: str, replacement: str) -> str:
     """Replace one captured div and all nested divs without rewriting its markup."""
     value = re.escape(element_id)
-    start_match = re.search(r'<div\b[^>]*\bid\s*=\s*(?:["\']' + value + r'["\']|' + value + r'(?=[\s>]))[^>]*>', text, re.I)
+    start_match = re.search(r'<div\b[^>]*\sid\s*=\s*(?:["\']' + value + r'["\']|' + value + r'(?=[\s>]))[^>]*>', text, re.I)
     if not start_match: return text
     depth = 0
     for tag in re.finditer(r'<div\b[^>]*>|</div\s*>', text[start_match.start():], re.I):
@@ -214,10 +214,21 @@ def prep(src: Path, name: str) -> Path:
         t = re.sub(r'data-userid\s*=\s*(?:"\d+"|\'\d+\'|\d+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
         t = re.sub(r'(<body[^>]*class=["\'][^"\']*)dark-theme', r'\1{{LUXORA_THEME}}', t, count=1, flags=re.I)
 
-    if name == "createexperience":
+    if name in {"createexperience", "configureexperience"}:
         t = re.sub(r'data-userid\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
         t = re.sub(r'(<span\b[^>]*\bid=["\']userData["\'][^>]*\bdata-name=)(?:"[^"]*"|\'[^\']*\'|[^\s>]+)',
                    r'\1"{{LUXORA_USERNAME}}"', t, flags=re.I)
+
+    if name == "configureexperience":
+        # Dedicated configuration variant from the captured Create form: retain the
+        # captured Basic/Access/Advanced panels and remove only the template picker.
+        t = replace_div_by_id(t, "templates_tab", "")
+        t = re.sub(r'<div\s+class=["\']tab\s+active["\']\s+data-id=["\']templates_tab["\']>\s*Templates\s*</div>', '', t, flags=re.I)
+        t = re.sub(r'(<div\s+class=["\'])tab(["\']\s+data-id=["\']basicsettings_tab["\'])', r'\1tab active\2', t, count=1, flags=re.I)
+        t = re.sub(r'(<div\s+class=["\'])tab-content(["\']\s+id=["\']basicsettings_tab["\'])', r'\1tab-content tab-active\2', t, count=1, flags=re.I)
+        t = t.replace("<title>Create Experience - Roblox</title>", "<title>Configure Experience - Roblox</title>", 1)
+        t = t.replace("<h1>Create Experience</h1>", "<h1>Configure Experience</h1>", 1)
+        t = t.replace('id="finishButton">Create Experience</a>', 'id="finishButton">Save</a>', 1)
 
     if name == "develop":
         # Remove archived owners/groups and captured games before the response exists.
@@ -256,7 +267,7 @@ def prep(src: Path, name: str) -> Path:
             if component in {"navigation", "peoplelist", "placeslist", "homeheader", "homepageupsellcard",
                              "avatarshophomepagerecommendations", "accountsecurityprompt", "gamelaunch"}:
                 local = None
-        elif name in {"develop", "createexperience"}:
+        elif name in {"develop", "createexperience", "configureexperience"}:
             digest = re.search(r'https://js\.rbxcdn\.com/([0-9a-f]+)\.js', tag, re.I)
             exact = f"develop2022-{digest.group(1)}.js" if digest else ""
             # Develop's listing is bound by our vanilla glue. Keep only the captured
@@ -270,14 +281,14 @@ def prep(src: Path, name: str) -> Path:
     def css_repl(mm: re.Match) -> str:
         tag = mm.group(0)
         component = bundle_name(tag)
-        css_map = HOME_CSS_NAME_MAP if name == "home" else DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience"} else CSS_NAME_MAP
+        css_map = HOME_CSS_NAME_MAP if name == "home" else DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience", "configureexperience"} else CSS_NAME_MAP
         local = css_map.get(component) if component else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
         return re.sub(r'href\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'href="{new}"', tag, count=1)
     t = re.sub(r"<link[^>]*href\s*=\s*(?:[\"']https://css\.rbxcdn\.com/[^\"']+[\"']|https://css\.rbxcdn\.com/[^\s>]+)[^>]*>", css_repl, t, flags=re.I)
     LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
-    elif name in {"develop", "createexperience"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
+    elif name in {"develop", "createexperience", "configureexperience"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
     t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
@@ -336,7 +347,7 @@ def prep(src: Path, name: str) -> Path:
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
     t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
-    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js"}
+    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'
