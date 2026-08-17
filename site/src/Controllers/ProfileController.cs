@@ -16,6 +16,13 @@ public sealed class ProfileController : ControllerBase
         public string Description { get; set; } = "";
         public DateTimeOffset Created { get; set; }
     }
+    private sealed class EquippedRow
+    {
+        public long Id { get; set; }
+        public string Name { get; set; } = "";
+        public string AssetType { get; set; } = "";
+        public string? ThumbnailPath { get; set; }
+    }
     private sealed class GameRow
     {
         public long Id { get; set; }
@@ -48,6 +55,10 @@ public sealed class ProfileController : ControllerBase
                    coalesce(sum(case when s.status=1 and s.last_heartbeat>now()-interval '90 seconds' then s.player_count else 0 end),0)::bigint as Playing
             from game g join place p on p.game_id=g.id and p.is_root_place left join game_session s on s.place_id=p.id
             where g.creator_id=@userId and g.is_active group by g.id,p.id order by g.visits desc,g.id desc limit 30", new { userId });
+        var wearing = await c.QueryAsync<EquippedRow>(@"
+            select i.id as Id,i.name as Name,i.asset_type as AssetType,i.thumbnail_path as ThumbnailPath
+            from user_avatar_asset a join catalog_item i on i.id=a.item_id where a.user_id=@userId
+            order by a.equipped desc limit 16",new{userId});
         var favorites = await c.QueryAsync<GameRow>(@"
             select g.id as Id,p.id as PlaceId,g.name as Name,g.visits as Visits,
                    coalesce(sum(case when s.status=1 and s.last_heartbeat>now()-interval '90 seconds' then s.player_count else 0 end),0)::bigint as Playing
@@ -59,6 +70,8 @@ public sealed class ProfileController : ControllerBase
             id=user.Id,name=user.Name,displayName=user.Name,description=user.Description,created=user.Created,
             friends=friendCount,followers=0,following=0,relation,canEdit=me==userId,
             avatarUrl=$"/thumbs/avatar/{userId}/420x420.png",headshotUrl=$"/thumbs/avatar-headshot/{userId}/150x150.png",
+            currentlyWearing=wearing.Select(x=>new{id=x.Id,name=x.Name,assetType=x.AssetType,
+                imageUrl=x.ThumbnailPath??"/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg"}),
             games=games.Select(Game),favoriteGames=favorites.Select(Game),placeVisits=games.Sum(x=>x.Visits)
         });
         static object Game(GameRow x) => new { universeId=x.Id,placeId=x.PlaceId,name=x.Name,playerCount=x.Playing,visits=x.Visits,imageUrl=$"/thumbs/game-icon/{x.Id}/150x150.png" };

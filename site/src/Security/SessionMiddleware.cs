@@ -67,7 +67,7 @@ public sealed class PageRenderMiddleware
         ["/universes/configure"] = "configureexperience",
         ["/discover"] = "discover",
         ["/games"] = "discover",
-        ["/catalog"] = "navpage",
+        ["/catalog"] = "catalog",
         ["/robux"] = "navpage",
         ["/users/friends"] = "navpage",
         ["/my/messages"] = "navpage",
@@ -92,6 +92,8 @@ public sealed class PageRenderMiddleware
             page = "navpage";
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/games/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "game";
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/catalog/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            page = "catalog";
         if (ctx.Request.Method == "GET" && page is not null)
         {
             // Signed-in users skip signup, but /login remains directly testable and can
