@@ -41,6 +41,7 @@ psql -h 127.0.0.1 -U luxora -d luxora -v ON_ERROR_STOP=1 -f 001_schema.sql
                (same)            -f 004_remove_placeholder_games.sql
                (same)            -f 005_thumbnails.sql
                (same)            -f 006_develop.sql
+               (same)            -f 007_place_uploads.sql
 ```
 
 ### 3. Configure the site (one copy command — profiles are pre-made)

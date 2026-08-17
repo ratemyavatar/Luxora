@@ -32,6 +32,15 @@ public sealed class DevelopController : ControllerBase
         public bool IsActive { get; set; }
         public string SocialSlotType { get; set; } = "Automatic";
         public int CustomSocialSlots { get; set; }
+        public string[] PlayableDevices { get; set; } = Array.Empty<string>();
+        public bool PrivateServersAllowed { get; set; }
+        public bool PrivateServersFree { get; set; }
+        public long PrivateServerPrice { get; set; }
+        public bool AllGearGenresAllowed { get; set; }
+        public string[] AllowedGearTypes { get; set; } = Array.Empty<string>();
+        public string ChatType { get; set; } = "Classic";
+        public bool OverridesDefaultAvatar { get; set; }
+        public bool HasPlaceFile { get; set; }
     }
 
     public sealed class SaveGameRequest
@@ -46,6 +55,14 @@ public sealed class DevelopController : ControllerBase
         public bool IsActive { get; set; }
         public string? SocialSlotType { get; set; }
         public int NumberOfCustomSocialSlots { get; set; }
+        public string[]? PlayableDevices { get; set; }
+        public bool ArePrivateServersAllowed { get; set; }
+        public bool IsFreePrivateServer { get; set; } = true;
+        public long PrivateServersPrice { get; set; }
+        public bool IsAllGenresAllowed { get; set; }
+        public string[]? AllowedGearTypes { get; set; }
+        public string? ChatType { get; set; }
+        public bool OverridesDefaultAvatar { get; set; }
     }
 
     [HttpGet("/apisite/develop/v1/user/games")]
@@ -78,7 +95,12 @@ public sealed class DevelopController : ControllerBase
                    g.genre as Genre, g.access_mode as AccessMode, g.max_players as MaxPlayers,
                    g.template_id as TemplateId, g.is_copying_allowed as IsCopyingAllowed,
                    g.is_active as IsActive, g.social_slot_type as SocialSlotType,
-                   g.custom_social_slots as CustomSocialSlots
+                   g.custom_social_slots as CustomSocialSlots, g.playable_devices as PlayableDevices,
+                   g.private_servers_allowed as PrivateServersAllowed, g.private_servers_free as PrivateServersFree,
+                   g.private_server_price as PrivateServerPrice, g.all_gear_genres_allowed as AllGearGenresAllowed,
+                   g.allowed_gear_types as AllowedGearTypes, g.chat_type as ChatType,
+                   g.overrides_default_avatar as OverridesDefaultAvatar,
+                   (p.rcc_file is not null) as HasPlaceFile
             from game g join place p on p.game_id=g.id and p.is_root_place
             where g.id=@gameId and g.creator_id=@me", new { gameId, me });
         if (row is null) return NotFound();
@@ -86,7 +108,12 @@ public sealed class DevelopController : ControllerBase
             description = row.Description, genre = row.Genre, access = row.AccessMode,
             numberOfPlayersMax = row.MaxPlayers, templateId = row.TemplateId,
             isCopyingAllowed = row.IsCopyingAllowed, isActive = row.IsActive,
-            socialSlotType = row.SocialSlotType, numberOfCustomSocialSlots = row.CustomSocialSlots });
+            socialSlotType = row.SocialSlotType, numberOfCustomSocialSlots = row.CustomSocialSlots,
+            playableDevices = row.PlayableDevices, arePrivateServersAllowed = row.PrivateServersAllowed,
+            isFreePrivateServer = row.PrivateServersFree, privateServersPrice = row.PrivateServerPrice,
+            isAllGenresAllowed = row.AllGearGenresAllowed, allowedGearTypes = row.AllowedGearTypes,
+            chatType = row.ChatType, overridesDefaultAvatar = row.OverridesDefaultAvatar,
+            hasPlaceFile = row.HasPlaceFile });
     }
 
     [HttpPost("/apisite/develop/v1/games")]
@@ -100,8 +127,11 @@ public sealed class DevelopController : ControllerBase
         using var tx = await c.BeginTransactionAsync();
         var gameId = await c.ExecuteScalarAsync<long>(@"
             insert into game(name,description,creator_id,is_active,max_players,genre,access_mode,
-                             is_copying_allowed,template_id,social_slot_type,custom_social_slots)
-            values(@name,@description,@me,@active,@maxPlayers,@genre,@access,@copying,@templateId,@social,@slots)
+                             is_copying_allowed,template_id,social_slot_type,custom_social_slots,
+                             playable_devices,private_servers_allowed,private_servers_free,private_server_price,
+                             all_gear_genres_allowed,allowed_gear_types,chat_type,overrides_default_avatar)
+            values(@name,@description,@me,@active,@maxPlayers,@genre,@access,@copying,@templateId,@social,@slots,
+                   @devices,@privateAllowed,@privateFree,@privatePrice,@allGear,@gearTypes,@chatType,@avatarOverride)
             returning id", Values(request, name, me.Value), tx);
         var placeId = await c.ExecuteScalarAsync<long>(@"
             insert into place(game_id,name,is_root_place) values(@gameId,@name,true) returning id",
@@ -124,7 +154,10 @@ public sealed class DevelopController : ControllerBase
         var changed = await c.ExecuteAsync(@"
             update game set name=@name,description=@description,is_active=@active,max_players=@maxPlayers,
                 genre=@genre,access_mode=@access,is_copying_allowed=@copying,template_id=@templateId,
-                social_slot_type=@social,custom_social_slots=@slots,updated=now()
+                social_slot_type=@social,custom_social_slots=@slots,playable_devices=@devices,
+                private_servers_allowed=@privateAllowed,private_servers_free=@privateFree,
+                private_server_price=@privatePrice,all_gear_genres_allowed=@allGear,
+                allowed_gear_types=@gearTypes,chat_type=@chatType,overrides_default_avatar=@avatarOverride,updated=now()
             where id=@gameId and creator_id=@me", values, tx);
         if (changed == 0) { await tx.RollbackAsync(); return NotFound(); }
         await c.ExecuteAsync("update place set name=@name,updated=now() where game_id=@gameId and is_root_place",
@@ -161,6 +194,7 @@ public sealed class DevelopController : ControllerBase
         if (name.Length is < 1 or > 50) return "Name must be between 1 and 50 characters.";
         if ((request.Description ?? "").Length > 1000) return "Description is too long.";
         if (request.NumberOfPlayersMax is < 1 or > 100) return "Maximum Visitor Count must be from 1 to 100.";
+        if (request.PrivateServersPrice is < 0 or > 10000) return "Private server price is invalid.";
         return null;
     }
 
@@ -178,6 +212,16 @@ public sealed class DevelopController : ControllerBase
         values.Add("templateId", r.TemplateId);
         values.Add("social", r.SocialSlotType ?? "Automatic");
         values.Add("slots", Math.Clamp(r.NumberOfCustomSocialSlots, 0, 100));
+        var allowedDevices = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Computer", "Phone", "Tablet", "Console" };
+        values.Add("devices", (r.PlayableDevices ?? Array.Empty<string>()).Where(allowedDevices.Contains).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        values.Add("privateAllowed", r.ArePrivateServersAllowed);
+        values.Add("privateFree", r.IsFreePrivateServer);
+        values.Add("privatePrice", r.IsFreePrivateServer ? 0 : Math.Clamp(r.PrivateServersPrice, 0, 10000));
+        values.Add("allGear", r.IsAllGenresAllowed);
+        var gear = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Melee", "PowerUps", "Ranged", "Navigation", "Explosive", "Musical", "Social", "PersonalTransport", "Building" };
+        values.Add("gearTypes", (r.AllowedGearTypes ?? Array.Empty<string>()).Where(gear.Contains).Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
+        values.Add("chatType", r.ChatType is "Classic" or "Bubble" ? r.ChatType : "Classic");
+        values.Add("avatarOverride", r.OverridesDefaultAvatar);
         return values;
     }
 
