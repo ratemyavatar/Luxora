@@ -5,7 +5,7 @@
   function el(html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; }
   function text(node, value) { if (node) node.textContent = value == null ? "" : String(value); }
   var host = q("#games-carousel-page"); if (!host) return;
-  host.innerHTML = '<div class="page"><main class="main"><div class="section-title">Popular Experiences</div><div class="games"></div></main></div>';
+  host.innerHTML = '<div class="games-list-container"><div class="container-header"><h1>Discover</h1></div><div class="game-grid"></div></div>';
 
   function card(game) {
     var item = el('<div class="grid-item-container game-card-container"><a class="game-card-link"><span class="thumbnail-2d-container game-card-thumb-container"><img class="game-card-thumb" alt=""></span><div class="game-card-name game-name-title"></div><div class="game-card-info"><span class="info-label icon-playing-counts-gray"></span><span class="info-label playing-counts-label"></span></div><div class="text-label xsmall text-overflow creator"></div></a></div>');
@@ -20,7 +20,7 @@
     var keyword = new URLSearchParams(location.search).get("Keyword") || "";
     fetch("/apisite/games/v1/discover?keyword=" + encodeURIComponent(keyword) + "&sort=Popular", { credentials: "same-origin" })
       .then(function (response) { return response.json(); }).then(function (body) {
-        var list = q(".games", host); list.innerHTML = "";
+        var list = q(".game-grid", host); list.innerHTML = "";
         (body.data || []).forEach(function (game) { list.appendChild(card(game)); });
       }).catch(function (error) { if (window.console) console.warn("[luxora] discover failed", error); });
   }

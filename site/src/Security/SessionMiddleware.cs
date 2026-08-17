@@ -73,7 +73,7 @@ public sealed class PageRenderMiddleware
         ["/robux"] = "navpage",
         ["/users/friends"] = "navpage",
         ["/my/messages"] = "navpage",
-        ["/my/avatar"] = "navpage",
+        ["/my/avatar"] = "avatar",
         ["/trades"] = "navpage",
         ["/my/groups"] = "navpage",
         ["/giftcards-us"] = "navpage",

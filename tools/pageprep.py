@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "ui4"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "avatar1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -320,7 +320,7 @@ def prep(src: Path, name: str) -> Path:
             # Develop's listing is bound by our vanilla glue. Keep only the captured
             # bootstrap trio; partial later bundles depend on uncaptured globals.
             local = exact if component in {"header", "polyfill", "headerscripts"} and exact and (SITE_WWW / "bundles/js" / exact).exists() else None
-        elif name in {"game", "discover", "profile", "catalog"}:
+        elif name in {"game", "discover", "profile", "catalog", "avatar"}:
             local = None
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
         return re.sub(r'src\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'src="{new_src}"', tag, count=1)
@@ -334,7 +334,7 @@ def prep(src: Path, name: str) -> Path:
                    DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience", "configureexperience", "catalogeditor"} else
                    GAME_CSS_NAME_MAP if name in {"game", "discover"} else
                    PROFILE_CSS_NAME_MAP if name == "profile" else
-                   HOME_CSS_NAME_MAP if name == "catalog" else CSS_NAME_MAP)
+                   HOME_CSS_NAME_MAP if name in {"catalog", "avatar"} else CSS_NAME_MAP)
         local = css_map.get(component) if component else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
         return re.sub(r'href\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'href="{new}"', tag, count=1)
@@ -343,7 +343,7 @@ def prep(src: Path, name: str) -> Path:
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
     elif name in {"develop", "createexperience", "configureexperience", "catalogeditor"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
     elif name in {"game", "discover"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "game2022-page.css"}
-    elif name in {"profile", "catalog"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "profile2022-page.css"}
+    elif name in {"profile", "catalog", "avatar"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "profile2022-page.css"}
     t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
@@ -405,20 +405,24 @@ def prep(src: Path, name: str) -> Path:
     if name in {"createexperience", "configureexperience", "catalogeditor"}:
         t = re.sub(r"</head>", '<link rel="stylesheet" href="/bundles/css/fan2020-grid.css">\n</head>', t, count=1, flags=re.I)
     elif name == "discover":
-        discover_link = '<link rel="stylesheet" href="/bundles/css/fan2020-discover.css">\n'
+        discover_link = '<link rel="stylesheet" href="https://css.rbxcdn.com/5d58fdaa60dedc843176981258306a3168ced80bfdb11ea8a382186e1c419caa.css">\n'
         t, linked = re.subn(r"</head>", discover_link + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + discover_link, t, count=1, flags=re.I)
     elif name == "catalog":
         catalog_links = '<link rel="stylesheet" href="/bundles/css/develop2022-main.css">\n<link rel="stylesheet" href="/bundles/css/develop2022-page.css">\n'
         t, linked = re.subn(r"</head>", catalog_links + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + catalog_links, t, count=1, flags=re.I)
+    elif name == "avatar":
+        avatar_link = '<link rel="stylesheet" href="https://css.rbxcdn.com/43246eb063d4fce7f3f28a2c6d167e33c7ecc50cf90dec5888d84a4923e7f243.css">\n'
+        t, linked = re.subn(r"</head>", avatar_link + '</head>', t, count=1, flags=re.I)
+        if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + avatar_link, t, count=1, flags=re.I)
     elif name == "game":
         # Exact immutable styles referenced by the captured 2021 game page. Keep the
         # local 2022-compatible sheets as fallback underneath these authoritative rules.
         game_links = '<link rel="stylesheet" href="https://css.rbxcdn.com/bb42d99b195855de31288f59c867272f2edbffa3bab76c13aad102e986fbea48.css">\n<link rel="stylesheet" href="https://static.rbxcdn.com/css/page___2740e1577ea4fe3dddbe5c20a75461ed_m.css/fetch">\n'
         t, linked = re.subn(r"</head>", game_links + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + game_links, t, count=1, flags=re.I)
-    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "catalogeditor": "catalog-editor.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js"}
+    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "catalogeditor": "catalog-editor.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js", "avatar": "avatar.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'
