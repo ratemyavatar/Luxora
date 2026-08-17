@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "avatar1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "pages1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -269,10 +269,24 @@ def prep(src: Path, name: str) -> Path:
         t = replace_first_div_by_class(t, "profile-container", '<div class="profile-container" id="luxora-profile"></div>')
         t = t.replace("hyskgl29", "User").replace("751000854", "0")
 
+    if name in {"friends", "messages", "robux"}:
+        t = replace_first_div_by_class(t, "profile-container", '<div id="HomeContainer" class="row home-container"><div id="home-header" class="col-xs-12 home-header-container"></div></div>')
+        t = t.replace("hyskgl29", "User").replace("751000854", "0")
+    if name == "inventory":
+        t = replace_div_by_id(t, "inventory-container", '<div id="HomeContainer" class="row home-container"><div id="home-header" class="col-xs-12 home-header-container"></div></div>')
+        t = t.replace("enzogamer123vv", "User").replace("1693098016", "0")
+    if name == "groups":
+        t = replace_div_by_id(t, "group-container", '<div id="HomeContainer" class="row home-container"><div id="home-header" class="col-xs-12 home-header-container"></div></div>')
+        t = t.replace("Wareblox", "Group").replace("6905799", "0")
+    if name == "settings":
+        t = replace_div_by_id(t, "user-account", '<div id="HomeContainer" class="row home-container"><div id="home-header" class="col-xs-12 home-header-container"></div></div>')
+
     if name == "catalog":
         t = replace_div_by_id(t, "avatar-container", '<div id="catalog-container" class="row page-content"></div>')
+
+    if name in {"catalog", "avatar"}:
         # The archive captured an already-open cookie preferences modal. Its fixed
-        # backdrop covered the entire replacement catalog and intercepted all clicks.
+        # backdrop covered the entire page and intercepted all clicks.
         t = replace_div_by_id(t, "cookieConsentModalOverlay", "")
         t = replace_div_by_id(t, "cookieConsentModalWrapper", "")
         t = replace_div_by_id(t, "cookie-banner-wrapper", "")
@@ -320,7 +334,7 @@ def prep(src: Path, name: str) -> Path:
             # Develop's listing is bound by our vanilla glue. Keep only the captured
             # bootstrap trio; partial later bundles depend on uncaptured globals.
             local = exact if component in {"header", "polyfill", "headerscripts"} and exact and (SITE_WWW / "bundles/js" / exact).exists() else None
-        elif name in {"game", "discover", "profile", "catalog", "avatar"}:
+        elif name in {"game", "discover", "profile", "catalog", "avatar", "friends", "messages", "robux", "inventory", "groups", "settings"}:
             local = None
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
         return re.sub(r'src\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'src="{new_src}"', tag, count=1)
@@ -333,7 +347,7 @@ def prep(src: Path, name: str) -> Path:
         css_map = (HOME_CSS_NAME_MAP if name == "home" else
                    DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience", "configureexperience", "catalogeditor"} else
                    GAME_CSS_NAME_MAP if name in {"game", "discover"} else
-                   PROFILE_CSS_NAME_MAP if name == "profile" else
+                   PROFILE_CSS_NAME_MAP if name in {"profile", "friends", "messages", "robux", "inventory", "groups", "settings"} else
                    HOME_CSS_NAME_MAP if name in {"catalog", "avatar"} else CSS_NAME_MAP)
         local = css_map.get(component) if component else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
@@ -343,7 +357,7 @@ def prep(src: Path, name: str) -> Path:
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
     elif name in {"develop", "createexperience", "configureexperience", "catalogeditor"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
     elif name in {"game", "discover"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "game2022-page.css"}
-    elif name in {"profile", "catalog", "avatar"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "profile2022-page.css"}
+    elif name in {"profile", "catalog", "avatar", "friends", "messages", "robux", "inventory", "groups", "settings"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "profile2022-page.css"}
     t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
@@ -416,13 +430,20 @@ def prep(src: Path, name: str) -> Path:
         avatar_link = '<link rel="stylesheet" href="https://css.rbxcdn.com/43246eb063d4fce7f3f28a2c6d167e33c7ecc50cf90dec5888d84a4923e7f243.css">\n'
         t, linked = re.subn(r"</head>", avatar_link + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + avatar_link, t, count=1, flags=re.I)
+    elif name in {"inventory", "groups", "settings"}:
+        exact = {"inventory": "https://css.rbxcdn.com/bf5b3a24151b2c7874ade877119f83f536883b85a428c50f3615fca35e201795.css",
+                 "groups": "https://css.rbxcdn.com/2646b56c92ce6a54165109ab3f398c7905c26dc7997dd0e97e324d9599a161e6.css",
+                 "settings": "https://css.rbxcdn.com/13074d6453ec96411d2f9c0a7a56e4346f0b87886a132d82c412c26240648cb1.css"}[name]
+        link = f'<link rel="stylesheet" href="{exact}">\n'
+        t, linked = re.subn(r"</head>", link + '</head>', t, count=1, flags=re.I)
+        if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + link, t, count=1, flags=re.I)
     elif name == "game":
         # Exact immutable styles referenced by the captured 2021 game page. Keep the
         # local 2022-compatible sheets as fallback underneath these authoritative rules.
         game_links = '<link rel="stylesheet" href="https://css.rbxcdn.com/bb42d99b195855de31288f59c867272f2edbffa3bab76c13aad102e986fbea48.css">\n<link rel="stylesheet" href="https://static.rbxcdn.com/css/page___2740e1577ea4fe3dddbe5c20a75461ed_m.css/fetch">\n'
         t, linked = re.subn(r"</head>", game_links + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + game_links, t, count=1, flags=re.I)
-    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "catalogeditor": "catalog-editor.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js", "avatar": "avatar.js"}
+    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "catalogeditor": "catalog-editor.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js", "avatar": "avatar.js", "friends": "nav-page.js", "messages": "nav-page.js", "robux": "nav-page.js", "inventory": "nav-page.js", "groups": "nav-page.js", "settings": "nav-page.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'

@@ -70,15 +70,15 @@ public sealed class PageRenderMiddleware
         ["/catalog"] = "catalog",
         ["/catalog/create"] = "catalogeditor",
         ["/catalog/configure"] = "catalogeditor",
-        ["/robux"] = "navpage",
-        ["/users/friends"] = "navpage",
-        ["/my/messages"] = "navpage",
+        ["/robux"] = "robux",
+        ["/users/friends"] = "friends",
+        ["/my/messages"] = "messages",
         ["/my/avatar"] = "avatar",
         ["/trades"] = "navpage",
-        ["/my/groups"] = "navpage",
+        ["/my/groups"] = "groups",
         ["/giftcards-us"] = "navpage",
         ["/premium/membership"] = "navpage",
-        ["/my/account"] = "navpage",
+        ["/my/account"] = "settings",
         ["/crossdevicelogin/confirmcode"] = "navpage",
         ["/info/help"] = "navpage",
     };
@@ -90,8 +90,10 @@ public sealed class PageRenderMiddleware
         Routes.TryGetValue(path, out var page);
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/profile$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "profile";
-        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/(inventory|friends)$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
-            page = "navpage";
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/inventory$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            page = "inventory";
+        if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/users/\d+/friends$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+            page = "friends";
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/games/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
             page = "game";
         if (page is null && System.Text.RegularExpressions.Regex.IsMatch(path, @"^/catalog/\d+(?:/[^/]+)?$", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
