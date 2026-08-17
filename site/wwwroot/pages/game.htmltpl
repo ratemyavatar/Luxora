@@ -1,5 +1,8 @@
 <!DOCTYPE html><!--[if IE 8]><html class=ie8 ng-app=robloxApp><![endif]--> <!--[if gt IE 8]><!--><html><!--<![endif]--><head data-machine-id=WEB2361>
-<script src="/luxora/hostshim.js?v=game4"></script><title>&#127463;&#127479; Experience - Roblox</title><meta http-equiv=X-UA-Compatible content="IE=edge,requiresActiveX=true"><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1"><meta name=author content="Roblox Corporation"><meta name=description content="Confira 🇧🇷 Experience. Esta experiência é uma das milhões de experiências 3D imersivas únicas criadas por pessoas na Roblox. AVISO: A Tradução está sendo refeita em PT-BR (atualmente em PT-Portugal), então ainda está em um processo de correção!
+<link rel="stylesheet" href="https://css.rbxcdn.com/bb42d99b195855de31288f59c867272f2edbffa3bab76c13aad102e986fbea48.css">
+<link rel="stylesheet" href="https://static.rbxcdn.com/css/page___2740e1577ea4fe3dddbe5c20a75461ed_m.css/fetch">
+
+<script src="/luxora/hostshim.js?v=ui4"></script><title>&#127463;&#127479; Experience - Roblox</title><meta http-equiv=X-UA-Compatible content="IE=edge,requiresActiveX=true"><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1"><meta name=author content="Roblox Corporation"><meta name=description content="Confira 🇧🇷 Experience. Esta experiência é uma das milhões de experiências 3D imersivas únicas criadas por pessoas na Roblox. AVISO: A Tradução está sendo refeita em PT-BR (atualmente em PT-Portugal), então ainda está em um processo de correção!
 
 Corra até o topo atráves de um enorme Experience de armas! 
 
@@ -169,7 +172,7 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js?v=game4" defer></script>
-<script src="/luxora/game-page.js?v=game4" defer></script>
+<script src="/luxora/auth.js?v=ui4" defer></script>
+<script src="/luxora/game-page.js?v=ui4" defer></script>
 </body>
 </html>

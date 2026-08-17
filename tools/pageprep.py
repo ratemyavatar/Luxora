@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "catalog3"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "ui4"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -402,6 +402,12 @@ def prep(src: Path, name: str) -> Path:
         catalog_links = '<link rel="stylesheet" href="/bundles/css/develop2022-main.css">\n<link rel="stylesheet" href="/bundles/css/develop2022-page.css">\n'
         t, linked = re.subn(r"</head>", catalog_links + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + catalog_links, t, count=1, flags=re.I)
+    elif name == "game":
+        # Exact immutable styles referenced by the captured 2021 game page. Keep the
+        # local 2022-compatible sheets as fallback underneath these authoritative rules.
+        game_links = '<link rel="stylesheet" href="https://css.rbxcdn.com/bb42d99b195855de31288f59c867272f2edbffa3bab76c13aad102e986fbea48.css">\n<link rel="stylesheet" href="https://static.rbxcdn.com/css/page___2740e1577ea4fe3dddbe5c20a75461ed_m.css/fetch">\n'
+        t, linked = re.subn(r"</head>", game_links + '</head>', t, count=1, flags=re.I)
+        if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + game_links, t, count=1, flags=re.I)
     glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
