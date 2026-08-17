@@ -228,7 +228,7 @@ def prep(src: Path, name: str) -> Path:
         t = re.sub(r'data-userid\s*=\s*(?:"\d+"|\'\d+\'|\d+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
         t = re.sub(r'(<body[^>]*class=["\'][^"\']*)dark-theme', r'\1{{LUXORA_THEME}}', t, count=1, flags=re.I)
 
-    if name in {"createexperience", "configureexperience"}:
+    if name in {"createexperience", "configureexperience", "catalogeditor"}:
         t = replace_div_by_id(t, "PrivateServersAccess", "")
         t = re.sub(r'<img\b[^>]*\bplace-access-tooltip\b[^>]*>', '', t, flags=re.I)
         t = re.sub(r'<script\b[^>]*>(?:(?!</script>).)*DisableVIPServersWarningTitleText(?:(?!</script>).)*</script>', '', t, flags=re.I | re.S)
@@ -246,6 +246,16 @@ def prep(src: Path, name: str) -> Path:
         t = t.replace("<title>Create Experience - Roblox</title>", "<title>Configure Experience - Roblox</title>", 1)
         t = t.replace("<h1>Create Experience</h1>", "<h1>Configure Experience</h1>", 1)
         t = t.replace('id="finishButton">Create Experience</a>', 'id="finishButton">Save</a>', 1)
+
+    if name == "catalogeditor":
+        for panel in ("templates_tab", "access_tab", "advancedsettings_tab"):
+            t = replace_div_by_id(t, panel, "")
+        t = re.sub(r'<div\s+class=["\']tab(?:\s+active)?["\']\s+data-id=["\'](?:templates_tab|access_tab|advancedsettings_tab)["\']>.*?</div>', '', t, flags=re.I | re.S)
+        t = re.sub(r'(<div\s+class=["\'])tab(["\']\s+data-id=["\']basicsettings_tab["\'])', r'\1tab active\2', t, count=1, flags=re.I)
+        t = re.sub(r'(<div\s+class=["\'])tab-content(["\']\s+id=["\']basicsettings_tab["\'])', r'\1tab-content tab-active\2', t, count=1, flags=re.I)
+        t = t.replace("<title>Create Experience - Roblox</title>", "<title>Configure Catalog Item - Roblox</title>", 1)
+        t = t.replace("<h1>Create Experience</h1>", "<h1>Configure Catalog Item</h1>", 1)
+        t = t.replace('id="finishButton">Create Experience</a>', 'id="finishButton">Save Item</a>', 1)
 
     if name == "game":
         # Keep the captured page shell but remove Arsenal and every captured dynamic
@@ -304,7 +314,7 @@ def prep(src: Path, name: str) -> Path:
             if component in {"navigation", "peoplelist", "placeslist", "homeheader", "homepageupsellcard",
                              "avatarshophomepagerecommendations", "accountsecurityprompt", "gamelaunch"}:
                 local = None
-        elif name in {"develop", "createexperience", "configureexperience"}:
+        elif name in {"develop", "createexperience", "configureexperience", "catalogeditor"}:
             digest = re.search(r'https://js\.rbxcdn\.com/([0-9a-f]+)\.js', tag, re.I)
             exact = f"develop2022-{digest.group(1)}.js" if digest else ""
             # Develop's listing is bound by our vanilla glue. Keep only the captured
@@ -321,7 +331,7 @@ def prep(src: Path, name: str) -> Path:
         tag = mm.group(0)
         component = bundle_name(tag)
         css_map = (HOME_CSS_NAME_MAP if name == "home" else
-                   DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience", "configureexperience"} else
+                   DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience", "configureexperience", "catalogeditor"} else
                    GAME_CSS_NAME_MAP if name in {"game", "discover"} else
                    PROFILE_CSS_NAME_MAP if name == "profile" else
                    HOME_CSS_NAME_MAP if name == "catalog" else CSS_NAME_MAP)
@@ -331,7 +341,7 @@ def prep(src: Path, name: str) -> Path:
     t = re.sub(r"<link[^>]*href\s*=\s*(?:[\"']https://css\.rbxcdn\.com/[^\"']+[\"']|https://css\.rbxcdn\.com/[^\s>]+)[^>]*>", css_repl, t, flags=re.I)
     LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
-    elif name in {"develop", "createexperience", "configureexperience"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
+    elif name in {"develop", "createexperience", "configureexperience", "catalogeditor"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
     elif name in {"game", "discover"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "game2022-page.css"}
     elif name in {"profile", "catalog"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "profile2022-page.css"}
     t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
@@ -392,7 +402,7 @@ def prep(src: Path, name: str) -> Path:
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
     t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
-    if name in {"createexperience", "configureexperience"}:
+    if name in {"createexperience", "configureexperience", "catalogeditor"}:
         t = re.sub(r"</head>", '<link rel="stylesheet" href="/bundles/css/fan2020-grid.css">\n</head>', t, count=1, flags=re.I)
     elif name == "discover":
         discover_link = '<link rel="stylesheet" href="/bundles/css/fan2020-discover.css">\n'
@@ -408,7 +418,7 @@ def prep(src: Path, name: str) -> Path:
         game_links = '<link rel="stylesheet" href="https://css.rbxcdn.com/bb42d99b195855de31288f59c867272f2edbffa3bab76c13aad102e986fbea48.css">\n<link rel="stylesheet" href="https://static.rbxcdn.com/css/page___2740e1577ea4fe3dddbe5c20a75461ed_m.css/fetch">\n'
         t, linked = re.subn(r"</head>", game_links + '</head>', t, count=1, flags=re.I)
         if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + game_links, t, count=1, flags=re.I)
-    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js"}
+    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "catalogeditor": "catalog-editor.js", "game": "game-page.js", "discover": "discover.js", "profile": "profile.js", "catalog": "catalog.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'

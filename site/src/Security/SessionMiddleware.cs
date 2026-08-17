@@ -68,6 +68,8 @@ public sealed class PageRenderMiddleware
         ["/discover"] = "discover",
         ["/games"] = "discover",
         ["/catalog"] = "catalog",
+        ["/catalog/create"] = "catalogeditor",
+        ["/catalog/configure"] = "catalogeditor",
         ["/robux"] = "navpage",
         ["/users/friends"] = "navpage",
         ["/my/messages"] = "navpage",

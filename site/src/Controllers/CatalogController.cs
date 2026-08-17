@@ -31,14 +31,19 @@ public sealed class CatalogController : ControllerBase
             new{keyword=(keyword??"").Trim(),category=category??"",sort=sort??"Popular"});
         return Ok(new{data=rows.Select(x=>new{id=x.Id,name=x.Name,description=x.Description,creatorId=x.CreatorId,
             creatorName=x.CreatorName,assetType=x.AssetType,price=x.Price,isForSale=x.IsForSale,sales=x.Sales,
-            favorites=x.Favorites,updated=x.Updated,imageUrl=x.ThumbnailPath??"/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg"})});
+            favorites=x.Favorites,updated=x.Updated,canManage=me==x.CreatorId,imageUrl=x.ThumbnailPath??"/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg"})});
     }
     [HttpGet("/apisite/catalog/v1/items/{itemId:long}")]
     public async Task<IActionResult> Item(long itemId)
     {
-        using var c=_db.Open();var x=await c.QueryFirstOrDefaultAsync<ItemRow>(@"select i.id as Id,i.name as Name,i.description as Description,i.creator_id as CreatorId,u.username::text as CreatorName,i.asset_type as AssetType,i.price as Price,i.is_for_sale as IsForSale,i.thumbnail_path as ThumbnailPath,i.sales as Sales,i.favorites as Favorites,i.updated as Updated from catalog_item i join users u on u.id=i.creator_id where i.id=@itemId",new{itemId});
-        return x is null?NotFound():Ok(new{id=x.Id,name=x.Name,description=x.Description,creatorId=x.CreatorId,creatorName=x.CreatorName,assetType=x.AssetType,price=x.Price,isForSale=x.IsForSale,sales=x.Sales,favorites=x.Favorites,updated=x.Updated,imageUrl=x.ThumbnailPath??"/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg"});
+        var me=CurrentUser.Id(HttpContext);using var c=_db.Open();var x=await c.QueryFirstOrDefaultAsync<ItemRow>(@"select i.id as Id,i.name as Name,i.description as Description,i.creator_id as CreatorId,u.username::text as CreatorName,i.asset_type as AssetType,i.price as Price,i.is_for_sale as IsForSale,i.thumbnail_path as ThumbnailPath,i.sales as Sales,i.favorites as Favorites,i.updated as Updated from catalog_item i join users u on u.id=i.creator_id where i.id=@itemId",new{itemId});
+        return x is null?NotFound():Ok(new{id=x.Id,name=x.Name,description=x.Description,creatorId=x.CreatorId,creatorName=x.CreatorName,assetType=x.AssetType,price=x.Price,isForSale=x.IsForSale,sales=x.Sales,favorites=x.Favorites,updated=x.Updated,canManage=me==x.CreatorId,imageUrl=x.ThumbnailPath??"/bundles/img/c94b4b3bdd1be463ef59dae29f93f882-thumbnail_status_unavailable_dark.svg"});
     }
+    public sealed class SaveItemRequest{public string? Name{get;set;}public string? Description{get;set;}public string? AssetType{get;set;}public long? Price{get;set;}public bool IsForSale{get;set;}}
+    [HttpPost("/apisite/catalog/v1/items")]
+    public async Task<IActionResult> Create([FromBody]SaveItemRequest r){var me=CurrentUser.Id(HttpContext);if(me is null)return Unauthorized();var name=(r.Name??"").Trim();if(name.Length is <1 or >60)return BadRequest();using var c=_db.Open();var id=await c.ExecuteScalarAsync<long>("insert into catalog_item(name,description,creator_id,asset_type,price,is_for_sale) values(@name,@description,@me,@type,@price,@sale) returning id",new{name,description=(r.Description??"").Trim(),me,type=r.AssetType??"Hat",price=r.Price,sale=r.IsForSale});return Ok(new{id});}
+    [HttpPut("/apisite/catalog/v1/items/{itemId:long}")]
+    public async Task<IActionResult> Update(long itemId,[FromBody]SaveItemRequest r){var me=CurrentUser.Id(HttpContext);if(me is null)return Unauthorized();using var c=_db.Open();var changed=await c.ExecuteAsync("update catalog_item set name=@name,description=@description,asset_type=@type,price=@price,is_for_sale=@sale,updated=now() where id=@itemId and creator_id=@me",new{name=(r.Name??"").Trim(),description=(r.Description??"").Trim(),type=r.AssetType??"Hat",price=r.Price,sale=r.IsForSale,itemId,me});return changed==0?NotFound():Ok(new{id=itemId});}
     [HttpPost("/apisite/catalog/v1/items/{itemId:long}/purchase")]
     public async Task<IActionResult> Purchase(long itemId)
     {

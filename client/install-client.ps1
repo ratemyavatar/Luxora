@@ -11,6 +11,7 @@ New-Item -ItemType Directory -Force -Path $dest|Out-Null
 # it accepts revival BaseUrls and join tickets. Fall back to the official package.
 $ver='version-66446108dba5497e'
 $urls=@(
+ 'https://bb.zawg.ca/assets/ecsr/bubbaclient2020.zip?v=15',
  'https://zawg.ca/assets/ecsr/bubbaclient2020.zip?v=15',
  "https://setup.rbxcdn.com/channel/zlive/$ver-RobloxApp.zip",
  "https://setup.rbxcdn.com/$ver-RobloxApp.zip"
