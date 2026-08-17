@@ -15,6 +15,9 @@ foreach ($line in Get-Content $manifest) {
     if ($parts.Count -lt 3) { continue }
     if ($parts.Count -eq 4) { $kind, $remote, $arch, $rel = $parts }
     else { $kind, $remote, $rel = $parts; $arch = 'https://web.archive.org/web/2020im_/' + $remote }
+    # Captured tr.rbxcdn URLs expire. Stable place IDs are handled by the dedicated
+    # thumbnail-metadata fetcher below instead of retrying dead hash URLs.
+    if ($rel -like 'bundles/img/templates/*') { continue }
     $dest = Join-Path (Join-Path $repo 'site\wwwroot') $rel
     if (Test-Path $dest) { $ok++; continue }
 
@@ -37,3 +40,6 @@ foreach ($line in Get-Content $manifest) {
 }
 Write-Host ""
 Write-Host "done: $ok ok, $fail failed. Failed ones are non-fatal (page works without them)." -ForegroundColor Cyan
+Write-Host ""
+Write-Host "refreshing Create Experience template cards through thumbnail metadata..." -ForegroundColor Cyan
+& (Join-Path $PSScriptRoot 'fetch-template-images.ps1')
