@@ -38,5 +38,6 @@ public sealed class LuxoraConfig
         public bool WarmUserThumbnails { get; set; } = true;
         public string GameServerAddress { get; set; } = "127.0.0.1";
         public int GamePortStart { get; set; } = 53640;
+        public string SiteInternalUrl { get; set; } = "http://127.0.0.1:5299";
     }
 }

@@ -121,11 +121,13 @@ public sealed class ThumbnailService
         }
 
         using var c = _db.Open();
-        var source = await c.QueryFirstOrDefaultAsync<string?>(@"
-            select p.rcc_file from place p join game g on g.id=p.game_id
-            where g.id=@targetId and p.is_root_place limit 1", new { targetId });
-        if (string.IsNullOrWhiteSpace(source)) return null;
-        var asset = source.Contains("://", StringComparison.Ordinal) ? source : "rbxasset://" + source.Replace('\\', '/');
+        var placeId = await c.QueryFirstOrDefaultAsync<long?>(@"
+            select p.id from place p join game g on g.id=p.game_id
+            where g.id=@targetId and p.is_root_place and p.rcc_file is not null limit 1", new { targetId });
+        if (placeId is null) return null;
+        // RCC's rbxasset:// root points at its content directory, not our uploaded-place
+        // directory. Use the same authenticated site asset endpoint as GameServer mode.
+        var asset = $"{_cfg.Grid.SiteInternalUrl}/asset/?id={placeId.Value}";
         return JsonSerializer.Serialize(new
         {
             Mode = "Thumbnail",
@@ -163,7 +165,8 @@ public sealed class ThumbnailService
         content.Headers.ContentType = new MediaTypeHeaderValue("text/xml") { CharSet = "utf-8" };
         using var response = await client.PostAsync(_cfg.Grid.SoapUrl, content);
         var body = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode) throw new InvalidOperationException($"RCC SOAP returned {(int)response.StatusCode}");
+        if (!response.IsSuccessStatusCode)
+            throw new InvalidOperationException($"RCC SOAP returned {(int)response.StatusCode}: {body[..Math.Min(body.Length, 800)]}");
 
         var xml = XDocument.Parse(body);
         var fault = xml.Descendants().FirstOrDefault(x => x.Name.LocalName.Equals("Fault", StringComparison.OrdinalIgnoreCase));
