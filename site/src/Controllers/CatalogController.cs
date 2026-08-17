@@ -18,7 +18,7 @@ public sealed class CatalogController : ControllerBase
     [HttpGet("/apisite/catalog/v1/search/items")]
     public async Task<IActionResult> Search([FromQuery]string? keyword,[FromQuery]string? category,[FromQuery]string? sort)
     {
-        using var c=_db.Open();var rows=await c.QueryAsync<ItemRow>(@"
+        var me=CurrentUser.Id(HttpContext);using var c=_db.Open();var rows=await c.QueryAsync<ItemRow>(@"
             select i.id as Id,i.name as Name,i.description as Description,i.creator_id as CreatorId,
                    u.username::text as CreatorName,i.asset_type as AssetType,i.price as Price,
                    i.is_for_sale as IsForSale,i.thumbnail_path as ThumbnailPath,i.sales as Sales,
