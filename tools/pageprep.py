@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "discover2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "game2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -220,6 +220,9 @@ def prep(src: Path, name: str) -> Path:
         t = re.sub(r'(<body[^>]*class=["\'][^"\']*)dark-theme', r'\1{{LUXORA_THEME}}', t, count=1, flags=re.I)
 
     if name in {"createexperience", "configureexperience"}:
+        t = replace_div_by_id(t, "PrivateServersAccess", "")
+        t = re.sub(r'<img\b[^>]*\bplace-access-tooltip\b[^>]*>', '', t, flags=re.I)
+        t = re.sub(r'<script\b[^>]*>(?:(?!</script>).)*DisableVIPServersWarningTitleText(?:(?!</script>).)*</script>', '', t, flags=re.I | re.S)
         t = re.sub(r'data-userid\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)', 'data-userid="{{LUXORA_USERID}}"', t, flags=re.I)
         t = re.sub(r'(<span\b[^>]*\bid=["\']userData["\'][^>]*\bdata-name=)(?:"[^"]*"|\'[^\']*\'|[^\s>]+)',
                    r'\1"{{LUXORA_USERNAME}}"', t, flags=re.I)

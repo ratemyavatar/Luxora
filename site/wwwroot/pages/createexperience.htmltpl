@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head data-machine-id="CHI1-WEB409">
-<script src="/luxora/hostshim.js?v=discover2"></script>
+<script src="/luxora/hostshim.js?v=game2"></script>
     <!-- MachineID: CHI1-WEB409 -->
     <title>Create Experience - Roblox</title>
 
@@ -1430,66 +1430,12 @@ Roblox.Endpoints.Urls = Roblox.Endpoints.Urls || {};
     <select class="form-select" id="Access" name="Access"><option selected="selected">Everyone</option>
 <option>Friends</option>
 </select>
-    <img class="TipsyImg tooltip-bottom h2-tooltip place-access-tooltip" src="/bundles/img/65cb6e4009a00247ca02800047aafb87.png" data-toggle="tooltip" alt="To restrict who may access this place, first you must disable private servers and not sell experience access." title="To restrict who may access this place, first you must disable private servers and not sell experience access." />
+
     <span class="field-validation-valid" data-valmsg-for="Access" data-valmsg-replace="true"></span>
 </div>
 
 
-    <div id="PrivateServersAccess" class="privateserversaccess">
-        <label class="form-label" for="ArePrivateServersAllowed">Private Servers:</label>
-        <label id="PrivateServerAccessLabel" class="checkboxListItem">
-            <input checked="checked" data-val="true" data-val-required="The ArePrivateServersAllowed field is required." id="AllowPrivateServersCheckbox" name="ArePrivateServersAllowed" type="checkbox" value="true" /><input name="ArePrivateServersAllowed" type="hidden" value="false" />
-            <span>
-                Allow Private Servers                     <a href="https://developer.roblox.com/en-us/articles/Creating-a-VIP-Server-on-Roblox" target="_blank">
-                        <img class="h2-tooltip private-server-tooltip" src="/bundles/img/65cb6e4009a00247ca02800047aafb87.png" alt="Click here to learn about private servers" data-toggle="tooltip" title="Click here to learn about private servers" />
-                    </a>
-            </span>
-        </label>
-        <div id="PrivateServerDetails">
-            <div id="ActivePrivateServersCount">There are currently 0 private servers active for this place. Disabling private servers will disable all of these private servers.</div>
-                <div id="PrivateServerDetailsError" class="status-error">Unable to load private server subscriptions.</div>
-                <div id="ActivePrivateServersSubscriptions">
-                    <img src="/bundles/img/e0802687d8357fbc484a75914e4447dc.gif" alt="Loading private server subscriptions...">
-                    Loading private server subscriptions...
-                </div>
-            <div class="formRadio" id="PrivateServerRadioButtons">
-                <label class="checkboxListItem"> <input data-val="true" data-val-required="The IsFreePrivateServer field is required." id="FreePrivateServers" name="IsFreePrivateServer" type="radio" value="True" /> <span class="checkboxListItem">Free</span></label>
-                <label class="checkboxListItem"> <input checked="checked" id="PaidPrivateServers" name="IsFreePrivateServer" type="radio" value="False" /> <span class="checkboxListItem">Paid</span></label>
-            </div>
-            <div id="PrivateServerPriceContainer" data-minprice="10" data-defaultprice="100" data-taxrate="0.3" style="display:none;">
-                <div id="PrivateServerPrice" class="pricingrow">
-                    <div class="pricinglabel">Price:</div>
-                    <div class="toppricingfield">
-                        <span class="icon-robux-16x16"></span><input class="TextBox priceinput" data-val="true" data-val-number="The field Price: must be a number." data-val-required="The Price: field is required." id="PrivateServerPriceInput" name="PrivateServersPrice" type="text" value="100" />
-                    </div>
-                    <span id="PrivateServerPricingError" class="status-error priceerror">
-                        The minimum price for this item is
-                        <span class="icon-robux-16x16"></span><span>10</span>
-                    </span>
-                    <div style="clear: both"></div>
-                </div>
-                <div id="PrivateServerMarketplaceFee" class="pricingrow">
-                    <div class="pricinglabel">
-                        Marketplace Fee <img class="h2-tooltip private-server-tooltip" src="/bundles/img/65cb6e4009a00247ca02800047aafb87.png" data-toggle="tooltip" data-toggle-mobile="true" data-original-title="30% - minimum 1" />:<br />
 
-                    </div>
-                    <div class="pricingfield">
-                        <span class="icon-robux-16x16"></span><span id="PrivateServerMarketplaceFeeText"></span>
-                    </div>
-                    <div style="clear: both"></div>
-                </div>
-                <div id="PrivateServerUserProfit" class="pricingrow">
-                    <div class="pricinglabel">You Earn:</div>
-                    <div class="pricingfield">
-                        <span class="icon-robux-16x16"></span><span id="PrivateServerUserProfitText"></span>
-                    </div>
-                    <div style="clear: both"></div>
-                </div>
-            </div>
-            <div id="PrivateServerPriceChangeWarning" class="status-error">Warning: Changing the price of private servers will cancel all existing subscriptions.</div>
-        </div>
-        <div id="PrivateServersError" class="status-error">To create a private server for this experience, you must first allow access to Everyone, and you must disable Paid Access.</div>
-    </div>
 <div style="clear:both;"></div>
 <script type="text/javascript">
     Roblox.PlayerAccess.strings = {
@@ -1586,30 +1532,7 @@ Roblox.Endpoints.Urls = Roblox.Endpoints.Urls || {};
 
 <input data-val="true" data-val-required="The Avatar Appearance Override: field is required." id="OverridesDefaultAvatar" name="OverridesDefaultAvatar" type="hidden" value="False" />
 
-<script type="text/javascript">
-    $(function () {
-        if (typeof Roblox === "undefined") {
-            Roblox = {};
-        }
-        if (typeof Roblox.IDE === "undefined") {
-            Roblox.IDE = {};
-        }
-        if (typeof Roblox.IDE.Resources === "undefined") {
-            Roblox.IDE.Resources = {};
-        }
-        $.extend(Roblox.IDE.Resources, {
-            AllowCopyingTitleText: "Allow Copying",
-            AllowCopyingTitleContent: "Are you sure you want to allow this place to be copied?",
-            AllowCopyingAcceptText: "Save",
-            AllowCopyingCancelText: "Cancel",
 
-            DisableVIPServersWarningTitleText: "Turn Off Private Servers",
-            DisableVIPServersWarningBodyContent: "Are you sure you want to turn off private servers? All private server subscriptions will be cancelled.",
-            DisableVIPServersWarningAcceptText: "Turn Off",
-            DisableVIPServersWarningDeclineText: "Cancel"
-        });
-    });
-</script>
             </div>
         </div>
         <div>
@@ -2016,7 +1939,7 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js?v=discover2" defer></script>
-<script src="/luxora/create-experience.js?v=discover2" defer></script>
+<script src="/luxora/auth.js?v=game2" defer></script>
+<script src="/luxora/create-experience.js?v=game2" defer></script>
 </body>
 </html>

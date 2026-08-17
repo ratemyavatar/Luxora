@@ -5,7 +5,7 @@
   function qa(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
   var form = q("#placeForm"); if (!form) return;
   var params = new URLSearchParams(location.search), gameId = parseInt(params.get("id"), 10) || 0;
-  var currentActive = false, currentPlaceId = 0;
+  var currentActive = true, currentPlaceId = 0;
 
   function api(url, options) {
     options = options || {}; options.credentials = "same-origin";

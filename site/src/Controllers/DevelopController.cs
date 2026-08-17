@@ -68,6 +68,7 @@ public sealed class DevelopController : ControllerBase
     [HttpGet("/apisite/develop/v1/user/games")]
     public async Task<IActionResult> MyGames([FromQuery] bool publicOnly = false)
     {
+        Response.Headers.CacheControl = "no-store";
         var me = CurrentUser.Id(HttpContext);
         if (me is null) return Unauthorized();
         using var c = _db.Open();
@@ -130,7 +131,7 @@ public sealed class DevelopController : ControllerBase
                              is_copying_allowed,template_id,social_slot_type,custom_social_slots,
                              playable_devices,private_servers_allowed,private_servers_free,private_server_price,
                              all_gear_genres_allowed,allowed_gear_types,chat_type,overrides_default_avatar)
-            values(@name,@description,@me,@active,@maxPlayers,@genre,@access,@copying,@templateId,@social,@slots,
+            values(@name,@description,@me,true,@maxPlayers,@genre,@access,@copying,@templateId,@social,@slots,
                    @devices,@privateAllowed,@privateFree,@privatePrice,@allGear,@gearTypes,@chatType,@avatarOverride)
             returning id", Values(request, name, me.Value), tx);
         var placeId = await c.ExecuteScalarAsync<long>(@"

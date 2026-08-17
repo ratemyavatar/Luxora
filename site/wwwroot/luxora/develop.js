@@ -42,7 +42,7 @@
     var container = q("#MyCreationsTab .items-container");
     if (!container) return;
     var checkbox = q("#MyCreationsTab .active-only-checkbox input");
-    var url = "/apisite/develop/v1/user/games?publicOnly=" + (checkbox && checkbox.checked ? "true" : "false");
+    var url = "/apisite/develop/v1/user/games?publicOnly=" + (checkbox && checkbox.checked ? "true" : "false") + "&_=" + Date.now();
     fetch(url, { credentials: "same-origin" }).then(function (response) {
       if (response.status === 401) { location.href = "/login?returnUrl=%2Fdevelop"; throw new Error("signed out"); }
       return response.json();

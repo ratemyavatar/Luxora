@@ -8,11 +8,12 @@
   host.innerHTML = '<div class="page"><main class="main"><div class="section-title">Popular Experiences</div><div class="games"></div></main></div>';
 
   function card(game) {
-    var item = el('<div class="game"><a><div class="thumb"><img class="game-card-thumb" width="100%" height="105" alt=""></div><b></b><small></small></a></div>');
+    var item = el('<div class="grid-item-container game-card-container"><a class="game-card-link"><span class="thumbnail-2d-container game-card-thumb-container"><img class="game-card-thumb" alt=""></span><div class="game-card-name game-name-title"></div><div class="game-card-info"><span class="info-label icon-playing-counts-gray"></span><span class="info-label playing-counts-label"></span></div><div class="text-label xsmall text-overflow creator"></div></a></div>');
     var link = q("a", item); link.href = "/games/" + game.placeId + "/" + encodeURIComponent(game.name.replace(/\s+/g, "-"));
     var image = q("img", item); image.src = game.imageUrl; image.alt = game.name;
-    text(q("b", item), game.name);
-    text(q("small", item), Number(game.playerCount || 0).toLocaleString() + " playing · By " + game.creatorName);
+    text(q(".game-card-name", item), game.name); q(".game-card-name", item).title = game.name;
+    text(q(".playing-counts-label", item), Number(game.playerCount || 0).toLocaleString());
+    text(q(".creator", item), "By " + game.creatorName);
     return item;
   }
   function load() {
