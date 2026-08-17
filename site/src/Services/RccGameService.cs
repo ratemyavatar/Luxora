@@ -34,10 +34,34 @@ public sealed class RccGameService
             _log.LogInformation("RCC game server {job} opened for place {place} on {port}",job,placeId,gamePort);return new(job,placeId,_cfg.Grid.GameServerAddress,gamePort);
         }finally{_gate.Release();}
     }
-    private async Task OpenJob(Guid id,string payload,int expiration,int category)
+    private async Task OpenJob(Guid id, string payload, int expiration, int category)
     {
-        XNamespace soap="http://schemas.xmlsoap.org/soap/envelope/",rcc="http://roblox.com/";var doc=new XDocument(new XElement(soap+"Envelope",new XAttribute(XNamespace.Xmlns+"soap",soap),new XElement(soap+"Body",new XElement(rcc+"OpenJob",new XElement(rcc+"job",new XElement(rcc+"id",id.ToString()),new XElement(rcc+"expirationInSeconds",expiration),new XElement(rcc+"category",category),new XElement(rcc+"cores",1)),new XElement(rcc+"script",new XElement(rcc+"name","GameServer"),new XElement(rcc+"script",payload)),new XElement(rcc+"arguments",new XElement(rcc+"LuaValue",new XElement(rcc+"type","LUA_TNIL"))))));
-        var client=_http.CreateClient();client.Timeout=TimeSpan.FromSeconds(30);using var content=new StringContent(doc.ToString(SaveOptions.DisableFormatting),Encoding.UTF8,"text/xml");using var response=await client.PostAsync(_cfg.Grid.SoapUrl,content);var body=await response.Content.ReadAsStringAsync();if(!response.IsSuccessStatusCode||body.Contains("Fault",StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("RCC game OpenJob failed: "+body[..Math.Min(body.Length,500)]);
+        XNamespace soap = "http://schemas.xmlsoap.org/soap/envelope/";
+        XNamespace rcc = "http://roblox.com/";
+        var doc = new XDocument(
+            new XElement(soap + "Envelope",
+                new XAttribute(XNamespace.Xmlns + "soap", soap),
+                new XElement(soap + "Body",
+                    new XElement(rcc + "OpenJob",
+                        new XElement(rcc + "job",
+                            new XElement(rcc + "id", id.ToString()),
+                            new XElement(rcc + "expirationInSeconds", expiration),
+                            new XElement(rcc + "category", category),
+                            new XElement(rcc + "cores", 1)),
+                        new XElement(rcc + "script",
+                            new XElement(rcc + "name", "GameServer"),
+                            new XElement(rcc + "script", payload)),
+                        new XElement(rcc + "arguments",
+                            new XElement(rcc + "LuaValue",
+                                new XElement(rcc + "type", "LUA_TNIL")))))));
+
+        var client = _http.CreateClient();
+        client.Timeout = TimeSpan.FromSeconds(30);
+        using var content = new StringContent(doc.ToString(SaveOptions.DisableFormatting), Encoding.UTF8, "text/xml");
+        using var response = await client.PostAsync(_cfg.Grid.SoapUrl, content);
+        var body = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode || body.Contains("Fault", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("RCC game OpenJob failed: " + body[..Math.Min(body.Length, 500)]);
     }
     private static int FindPort(int start,int count){for(var p=start;p<start+count;p++){try{var l=new TcpListener(IPAddress.Any,p);l.Start();l.Stop();return p;}catch{}}return 0;}
 }
