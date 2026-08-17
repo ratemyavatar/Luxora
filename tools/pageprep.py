@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "game1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "discover1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -286,7 +286,7 @@ def prep(src: Path, name: str) -> Path:
             # Develop's listing is bound by our vanilla glue. Keep only the captured
             # bootstrap trio; partial later bundles depend on uncaptured globals.
             local = exact if component in {"header", "polyfill", "headerscripts"} and exact and (SITE_WWW / "bundles/js" / exact).exists() else None
-        elif name == "game":
+        elif name in {"game", "discover"}:
             local = None
         new_src = f"/bundles/js/{local}" if local else "/bundles/js/__404.js"
         return re.sub(r'src\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'src="{new_src}"', tag, count=1)
@@ -298,7 +298,7 @@ def prep(src: Path, name: str) -> Path:
         component = bundle_name(tag)
         css_map = (HOME_CSS_NAME_MAP if name == "home" else
                    DEVELOP_CSS_NAME_MAP if name in {"develop", "createexperience", "configureexperience"} else
-                   GAME_CSS_NAME_MAP if name == "game" else CSS_NAME_MAP)
+                   GAME_CSS_NAME_MAP if name in {"game", "discover"} else CSS_NAME_MAP)
         local = css_map.get(component) if component else None
         new = f"/bundles/css/{local}" if local else EMPTY_CSS
         return re.sub(r'href\s*=\s*(?:["\'][^"\']*["\']|https?://[^\s>]+)', f'href="{new}"', tag, count=1)
@@ -306,7 +306,7 @@ def prep(src: Path, name: str) -> Path:
     LEGACY_CSS = {"leanbase": "leanbase.css", "page": "page.css"}
     if name == "home": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "__empty.css"}
     elif name in {"develop", "createexperience", "configureexperience"}: LEGACY_CSS = {"maincss": "develop2022-main.css", "page": "develop2022-page.css"}
-    elif name == "game": LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "game2022-page.css"}
+    elif name in {"game", "discover"}: LEGACY_CSS = {"leanbase": "home2022-leanbase.css", "page": "game2022-page.css"}
     t = re.sub(r'href\s*=\s*["\']?https://static\.rbxcdn\.com/css/(\w+)___[0-9a-f]+_m\.css(?:/fetch)?["\']?',
                lambda mm: f'href="/bundles/css/{LEGACY_CSS.get(mm.group(1).lower(), "__empty.css")}"', t, flags=re.I)
     t = re.sub(r'https://static\.rbxcdn\.com/([0-9a-f]{32,64})\.(js|css)', lambda mm: f"/bundles/{'js' if mm.group(2)=='js' else 'css'}/__404.{mm.group(2)}", t)
@@ -365,7 +365,9 @@ def prep(src: Path, name: str) -> Path:
 
     # 8) inject our shim EARLY (first <head> script) + glue before </body>
     t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
-    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "game": "game-page.js"}
+    if name in {"createexperience", "configureexperience"}:
+        t = re.sub(r"</head>", '<link rel="stylesheet" href="/bundles/css/fan2020-grid.css">\n</head>', t, count=1, flags=re.I)
+    glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "game": "game-page.js", "discover": "discover.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'
             '\n  baseUrl: "{{LUXORA_BASEURL}}" };\n</script>\n'

@@ -53,6 +53,9 @@
   function submit(event) {
     if (event) event.preventDefault();
     var data = payload();
+    var deviceError = q("#device-type-error");
+    if (!data.playableDevices.length) { if (deviceError) deviceError.classList.remove("hidden"); return; }
+    if (deviceError) deviceError.classList.add("hidden");
     if (!data.name.trim()) return showError("Name is required");
     var url = gameId ? "/apisite/develop/v1/games/" + gameId : "/apisite/develop/v1/games";
     api(url, { method: gameId ? "PUT" : "POST", body: JSON.stringify(data) }).then(function (saved) {
@@ -83,6 +86,8 @@
     }).catch(function () { showError("Experience not found."); });
   }
 
+  qa(".templates", form).forEach(function (templates) { templates.classList.add("games"); });
+  var initialDeviceError = q("#device-type-error"); if (initialDeviceError) initialDeviceError.classList.add("hidden");
   var advanced = q("#advancedsettings_tab", form);
   if (advanced && !q("#PlaceFile", advanced)) advanced.insertAdjacentHTML("beforeend", '<div class="divider-bottom spacing"></div><div class="headline"><h2>Place File</h2></div><label class="form-label" for="PlaceFile">Upload Place:</label><input class="text-box text-box-medium" id="PlaceFile" name="PlaceFile" type="file" accept=".rbxl,.rbxlx"><span class="field-validation-valid" id="PlaceFileStatus"></span><a class="btn-medium btn-secondary hidden" id="DownloadPlaceFile">Download Current Place</a>');
 

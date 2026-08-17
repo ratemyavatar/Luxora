@@ -29,6 +29,36 @@ public sealed class GamePageController : ControllerBase
         public long Playing { get; set; }
     }
 
+    private sealed class DiscoverRow
+    {
+        public long Id { get; set; }
+        public long PlaceId { get; set; }
+        public string Name { get; set; } = "";
+        public string CreatorName { get; set; } = "";
+        public long Playing { get; set; }
+        public long Visits { get; set; }
+        public DateTimeOffset Updated { get; set; }
+    }
+
+    [HttpGet("/apisite/games/v1/discover")]
+    public async Task<IActionResult> Discover([FromQuery] string? keyword, [FromQuery] string? sort)
+    {
+        using var c = _db.Open();
+        var rows = await c.QueryAsync<DiscoverRow>(@"
+            select g.id as Id,p.id as PlaceId,g.name as Name,u.username::text as CreatorName,
+                   g.visits as Visits,g.updated as Updated,
+                   coalesce(sum(case when s.status=1 and s.last_heartbeat>now()-interval '90 seconds' then s.player_count else 0 end),0)::bigint as Playing
+            from game g join place p on p.game_id=g.id and p.is_root_place join users u on u.id=g.creator_id
+            left join game_session s on s.place_id=p.id
+            where g.is_active and (@keyword='' or g.name ilike '%'||@keyword||'%' or u.username::text ilike '%'||@keyword||'%')
+            group by g.id,p.id,u.username
+            order by case when @sort='Updated' then extract(epoch from g.updated) else coalesce(sum(case when s.status=1 then s.player_count else 0 end),0)*1000000+g.visits end desc,g.id desc
+            limit 120", new { keyword = (keyword ?? "").Trim(), sort = sort ?? "Popular" });
+        return Ok(new { data = rows.Select(x => new { universeId=x.Id,placeId=x.PlaceId,name=x.Name,
+            creatorName=x.CreatorName,playerCount=x.Playing,visits=x.Visits,updated=x.Updated,
+            imageUrl=$"/thumbs/game-icon/{x.Id}/150x150.png" }) });
+    }
+
     [HttpGet("/apisite/games/v1/places/{placeId:long}/details")]
     public async Task<IActionResult> Details(long placeId)
     {
