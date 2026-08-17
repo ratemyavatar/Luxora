@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "discover1"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "discover2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -367,6 +367,10 @@ def prep(src: Path, name: str) -> Path:
     t = re.sub(r"(<head[^>]*>)", r'\1' + '\n<script src="/luxora/hostshim.js?v=' + GLUE_VER + '"></script>', t, count=1, flags=re.I)
     if name in {"createexperience", "configureexperience"}:
         t = re.sub(r"</head>", '<link rel="stylesheet" href="/bundles/css/fan2020-grid.css">\n</head>', t, count=1, flags=re.I)
+    elif name == "discover":
+        discover_link = '<link rel="stylesheet" href="/bundles/css/fan2020-discover.css">\n'
+        t, linked = re.subn(r"</head>", discover_link + '</head>', t, count=1, flags=re.I)
+        if linked == 0: t = re.sub(r"(<head[^>]*>)", r'\1\n' + discover_link, t, count=1, flags=re.I)
     glue_files = {"home": "home.js", "develop": "develop.js", "createexperience": "create-experience.js", "configureexperience": "create-experience.js", "game": "game-page.js", "discover": "discover.js"}
     page_glue = (f'<script src="/luxora/{glue_files[name]}?v={GLUE_VER}" defer></script>\n' if name in glue_files else '')
     glue = ('<script>\nwindow.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",'

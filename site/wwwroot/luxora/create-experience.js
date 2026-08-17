@@ -86,7 +86,18 @@
     }).catch(function () { showError("Experience not found."); });
   }
 
-  qa(".templates", form).forEach(function (templates) { templates.classList.add("games"); });
+  var templateGroups = qa(".templates", form);
+  templateGroups.forEach(function (templates) {
+    if (templates.dataset.templatetype === "All") templates.classList.add("games");
+    else templates.classList.add("hidden");
+  });
+  qa(".templatetypes [data-templatetype] a", form).forEach(function (link) { link.addEventListener("click", function (event) {
+    event.preventDefault(); var type = link.parentNode.getAttribute("data-templatetype");
+    templateGroups.forEach(function (templates) {
+      var selected = templates.dataset.templatetype === type;
+      templates.classList.toggle("hidden", !selected); templates.classList.toggle("games", selected);
+    });
+  }); });
   var initialDeviceError = q("#device-type-error"); if (initialDeviceError) initialDeviceError.classList.add("hidden");
   var advanced = q("#advancedsettings_tab", form);
   if (advanced && !q("#PlaceFile", advanced)) advanced.insertAdjacentHTML("beforeend", '<div class="divider-bottom spacing"></div><div class="headline"><h2>Place File</h2></div><label class="form-label" for="PlaceFile">Upload Place:</label><input class="text-box text-box-medium" id="PlaceFile" name="PlaceFile" type="file" accept=".rbxl,.rbxlx"><span class="field-validation-valid" id="PlaceFileStatus"></span><a class="btn-medium btn-secondary hidden" id="DownloadPlaceFile">Download Current Place</a>');

@@ -1,5 +1,27 @@
-/* Data binding for the captured 2021/2022 Discover games-carousel page. */
-(function(){"use strict";function q(s,r){return(r||document).querySelector(s)}function el(h){var t=document.createElement("template");t.innerHTML=h.trim();return t.content.firstElementChild}function text(n,v){if(n)n.textContent=v==null?"":String(v)}
-var host=q("#games-carousel-page");if(!host)return;host.innerHTML='<div class="game-home-page-container"><div class="game-home-page-carousel-title"><h1>Discover</h1><select class="form-select" id="discover-sort"><option>Popular</option><option>Updated</option></select></div><div class="game-carousel"></div></div>';
-function card(g){var x=el('<div class="grid-item-container game-card-container"><a class="game-card-link"><span class="thumbnail-2d-container game-card-thumb-container"><img class="game-card-thumb" alt=""></span><div class="game-card-name game-name-title"></div><div class="game-card-info"><span class="info-label icon-playing-counts-gray"></span><span class="info-label playing-counts-label"></span></div></a></div>');var a=q("a",x);a.href="/games/"+g.placeId+"/"+encodeURIComponent(g.name.replace(/\s+/g,"-"));q("img",x).src=g.imageUrl;q("img",x).alt=g.name;text(q(".game-card-name",x),g.name);q(".game-card-name",x).title=g.name;text(q(".playing-counts-label",x),Number(g.playerCount||0).toLocaleString());return x}
-function load(){var keyword=new URLSearchParams(location.search).get("Keyword")||"",sort=q("#discover-sort").value;fetch("/apisite/games/v1/discover?keyword="+encodeURIComponent(keyword)+"&sort="+encodeURIComponent(sort),{credentials:"same-origin"}).then(function(r){return r.json()}).then(function(b){var list=q(".game-carousel",host);list.innerHTML="";(b.data||[]).forEach(function(g){list.appendChild(card(g))})}).catch(function(e){if(console)console.warn("[luxora] discover failed",e)})}q("#discover-sort").addEventListener("change",load);load()})();
+/* Database binding for the supplied 2020 fan-made Discover layout. */
+(function () {
+  "use strict";
+  function q(s, r) { return (r || document).querySelector(s); }
+  function el(html) { var t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; }
+  function text(node, value) { if (node) node.textContent = value == null ? "" : String(value); }
+  var host = q("#games-carousel-page"); if (!host) return;
+  host.innerHTML = '<div class="page"><main class="main"><div class="section-title">Popular Experiences</div><div class="games"></div></main></div>';
+
+  function card(game) {
+    var item = el('<div class="game"><a><div class="thumb"><img class="game-card-thumb" width="100%" height="105" alt=""></div><b></b><small></small></a></div>');
+    var link = q("a", item); link.href = "/games/" + game.placeId + "/" + encodeURIComponent(game.name.replace(/\s+/g, "-"));
+    var image = q("img", item); image.src = game.imageUrl; image.alt = game.name;
+    text(q("b", item), game.name);
+    text(q("small", item), Number(game.playerCount || 0).toLocaleString() + " playing · By " + game.creatorName);
+    return item;
+  }
+  function load() {
+    var keyword = new URLSearchParams(location.search).get("Keyword") || "";
+    fetch("/apisite/games/v1/discover?keyword=" + encodeURIComponent(keyword) + "&sort=Popular", { credentials: "same-origin" })
+      .then(function (response) { return response.json(); }).then(function (body) {
+        var list = q(".games", host); list.innerHTML = "";
+        (body.data || []).forEach(function (game) { list.appendChild(card(game)); });
+      }).catch(function (error) { if (window.console) console.warn("[luxora] discover failed", error); });
+  }
+  load();
+})();

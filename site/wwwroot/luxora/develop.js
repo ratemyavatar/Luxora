@@ -23,8 +23,12 @@
     var place = q(".start-place-url", row); place.href = gameUrl; text(place, game.name);
     var status = q(".activate-cell a", row); status.href = "#"; status.className = game.isActive ? "place-active" : "place-inactive"; text(status, game.isActive ? "Public" : "Private");
     status.addEventListener("click", function (event) {
-      event.preventDefault();
-      post("/apisite/develop/v1/games/" + game.id + "/active", { isActive: !game.isActive }).then(load);
+      event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation();
+      var next = !game.isActive; text(status, next ? "Making Public..." : "Making Private...");
+      post("/apisite/develop/v1/games/" + game.id + "/active", { isActive: next }).then(load).catch(function (error) {
+        text(status, game.isActive ? "Public" : "Private");
+        if (window.console) console.error("[luxora] visibility update failed", error);
+      });
     });
     q(".edit-col .btn-control", row).href = "/develop?Page=ads&gameId=" + game.id;
     q(".roblox-edit-button", row).href = "/universes/configure?id=" + game.id;

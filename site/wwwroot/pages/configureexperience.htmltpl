@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head data-machine-id="CHI1-WEB409">
-<script src="/luxora/hostshim.js?v=discover1"></script>
+<script src="/luxora/hostshim.js?v=discover2"></script>
     <!-- MachineID: CHI1-WEB409 -->
     <title>Configure Experience - Roblox</title>
 
@@ -1852,7 +1852,7 @@ window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js?v=discover1" defer></script>
-<script src="/luxora/create-experience.js?v=discover1" defer></script>
+<script src="/luxora/auth.js?v=discover2" defer></script>
+<script src="/luxora/create-experience.js?v=discover2" defer></script>
 </body>
 </html>
