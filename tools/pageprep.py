@@ -11,7 +11,7 @@ usage: python3 tools/pageprep.py <capture.html> <templateName>
 import json, re, shutil, sys
 from pathlib import Path
 
-GLUE_VER = "catalog2"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
+GLUE_VER = "catalog3"  # bump whenever luxora glue changes meaningfully (kills stale browser caches)
 
 ROOT = Path(__file__).resolve().parent.parent
 STUDY = ROOT.parent / "study"
@@ -261,6 +261,11 @@ def prep(src: Path, name: str) -> Path:
 
     if name == "catalog":
         t = replace_div_by_id(t, "avatar-container", '<div id="catalog-container" class="row page-content"></div>')
+        # The archive captured an already-open cookie preferences modal. Its fixed
+        # backdrop covered the entire replacement catalog and intercepted all clicks.
+        t = replace_div_by_id(t, "cookieConsentModalOverlay", "")
+        t = replace_div_by_id(t, "cookieConsentModalWrapper", "")
+        t = replace_div_by_id(t, "cookie-banner-wrapper", "")
 
     if name == "develop":
         # Remove archived owners/groups and captured games before the response exists.

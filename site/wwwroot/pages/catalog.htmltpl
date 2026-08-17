@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/bundles/css/develop2022-main.css">
 <link rel="stylesheet" href="/bundles/css/develop2022-page.css">
 
-<script src="/luxora/hostshim.js?v=catalog2"></script><title>Avatar - Roblox</title><meta http-equiv=X-UA-Compatible content="IE=edge,requiresActiveX=true"><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1"><meta name=author content="Roblox Corporation"><meta name=description content="Roblox is a global platform that brings people together through play."><meta name=keywords content="free games,online games,building games,virtual worlds,free mmo,gaming cloud,physics engine"><meta name=apple-itunes-app content="app-id=431946152"><script type=application/ld+json>
+<script src="/luxora/hostshim.js?v=catalog3"></script><title>Avatar - Roblox</title><meta http-equiv=X-UA-Compatible content="IE=edge,requiresActiveX=true"><meta charset=UTF-8><meta name=viewport content="width=device-width, initial-scale=1"><meta name=author content="Roblox Corporation"><meta name=description content="Roblox is a global platform that brings people together through play."><meta name=keywords content="free games,online games,building games,virtual worlds,free mmo,gaming cloud,physics engine"><meta name=apple-itunes-app content="app-id=431946152"><script type=application/ld+json>
     {
     "@context" : "http://schema.org",
     "@type" : "Organization",
@@ -146,13 +146,13 @@ GoogleListener.init();RobloxEventManager.initialize(true);RobloxEventManager.tri
             </div>
         </div>
     </div>
-</script><div id=cookieConsentModalOverlay class="cookie-modal-overlay modal-backdrop in"></div><div id=cookieConsentModalWrapper class="cookie-modal-wrapper modal-dialog"><div id=cookieConsentModal class="modal-content cookie-modal desktop"><div class="modal-header cookie-modal-title"><button type=button class=close> <span aria-hidden=true> <span class=icon-close></span> </span> <span class=sr-only></span> </button><h4>Manage Cookies</h4></div><div class="cookie-modal-content modal-body"><div class=cookie-modal-description>Please choose whether this site may use cookies as described below. You can learn more about how this site uses cookies and related technologies by reading our <a id=cookie-link-privacy class="cookie-link-privacy text-name" href=/info/privacy>privacy policy</a>.</div><div class="modal-checkbox checkbox cookie-checkbox"><input id=cookie-checkbox-essential type=checkbox disabled checked> <label for=cookie-checkbox-essential class=cookie-checkbox-label> Essential Cookies </label></div><div class=cookie-modal-padding>These cookies are required to provide the functionality on the site, such as for user authentication, securing the system or saving cookie preferences.</div><ul class="cookie-modal-padding cookie-modal-list"><li>Roblox<li>Zendesk<li>Gigya</ul><div class="modal-checkbox checkbox cookie-checkbox"><input id=cookie-checkbox-tracking type=checkbox> <label for=cookie-checkbox-tracking class=cookie-checkbox-label> Analytics Cookies </label></div><div class=cookie-modal-padding>These cookies used for improving site performance or understanding site usage.</div><ul class="cookie-modal-padding cookie-modal-list"><li>Google Analytics<li>Google Universal Analytics</ul></div><button id=cookie-btn-allow class="btn-secondary-md cookie-btn-allow"> Allow </button></div></div><div id=cookie-banner-wrapper class="cookie-banner-wrapper desktop"><div class="alert-info cookie-banner"><div class=banner-item>Roblox uses cookies to personalize content, provide social media features and analyze the traffic on our site. To learn about how we use cookies and how you can <a id=cookie-link-manage href=# class="cookie-link-manage text-name">manage cookie preferences</a>, please refer to our <a class=text-name href=/info/privacy>Privacy and Cookie Policy</a>.</div><div class="banner-item accept-btn"><button type=button id=CookieLawAccept class="btn-secondary-sm cookie-law-accept-btn"> Accept </button></div></div></div><script onerror=Roblox.BundleDetector&amp;&amp;Roblox.BundleDetector.reportBundleError(this) data-monitor=true data-bundlename=pageEnd src="/bundles/js/__404.js"></script>
+</script><script onerror=Roblox.BundleDetector&amp;&amp;Roblox.BundleDetector.reportBundleError(this) data-monitor=true data-bundlename=pageEnd src="/bundles/js/__404.js"></script>
 <script>
 window.LUXORA = { xsrf: "{{LUXORA_XSRF}}", turnstileSiteKey: "{{LUXORA_TURNSTILE_SITEKEY}}",
   baseUrl: "{{LUXORA_BASEURL}}" };
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="/luxora/auth.js?v=catalog2" defer></script>
-<script src="/luxora/catalog.js?v=catalog2" defer></script>
+<script src="/luxora/auth.js?v=catalog3" defer></script>
+<script src="/luxora/catalog.js?v=catalog3" defer></script>
 </body>
 </html>

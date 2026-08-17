@@ -50,6 +50,15 @@ public sealed class PlaceFileController : ControllerBase
         return path is null || !System.IO.File.Exists(path) ? NotFound() : PhysicalFile(path, "application/octet-stream", enableRangeProcessing: true);
     }
 
+    [HttpGet("/apisite/develop/v1/places/{placeId:long}/file-status")]
+    public async Task<IActionResult> FileStatus(long placeId)
+    {
+        var path=await PathFor(placeId,requireOwner:true);
+        if(path is null)return NotFound();
+        var file=new FileInfo(path);
+        return Ok(new{placeId,exists=file.Exists,path=Path.GetFileName(path),size=file.Exists?file.Length:0,lastWrite=file.Exists?file.LastWriteTimeUtc:(DateTime?)null});
+    }
+
     [HttpGet("/apisite/develop/v1/places/{placeId:long}/download")]
     public async Task<IActionResult> Download(long placeId)
     {

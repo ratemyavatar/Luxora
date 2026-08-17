@@ -8,8 +8,9 @@ try {
     $u.Query.TrimStart('?').Split('&')|ForEach-Object{$p=$_.Split('=',2);if($p.Length-eq2){$query[$p[0]]=[Uri]::UnescapeDataString($p[1])}}
     $ticket=$query.ticket;$placeId=$query.placeId;$base=$query.baseUrl
     if(!$base){$base='http://localhost:5299'}
-    $player=Get-ChildItem (Join-Path $repo 'client\Player2020') -Recurse -Filter 'RobloxPlayerBeta.exe' -File | Select-Object -First 1
-    if(!$player){throw 'RobloxPlayerBeta.exe was not found. Run client\install-client.ps1 again.'}
+    $clientRoot=Join-Path $repo 'client\Player2020'
+    $player=Get-ChildItem $clientRoot -Recurse -File | Where-Object { $_.Name -in @('BBPlayerBeta.exe','RobloxPlayerBeta.exe') } | Sort-Object @{Expression={if($_.Name-eq'BBPlayerBeta.exe'){0}else{1}}} | Select-Object -First 1
+    if(!$player){throw 'A compatible 2020 player was not found. Run client\install-client.ps1 again.'}
     # Match the known working BubbaBlox 2020 invocation: auth URL, PlaceLauncher URL, ticket.
     $join="$base/game/PlaceLauncher.ashx?placeid=$placeId&ticket=$ticket&2020=true"
     $auth="$base/login/negotiate.ashx"
